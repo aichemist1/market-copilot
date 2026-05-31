@@ -6,6 +6,8 @@ This document defines the MVP ingestion and normalization design for congression
 
 The immediate goal is to build a reliable backend pipeline that ingests congressional disclosures, extracts usable content from source files, uses an LLM to convert the input into a unified structured format, validates the result, and publishes it for backend querying.
 
+This document is intentionally source-specific. It supports the first delivery phase described in the product spec and does not define the full long-term product scope by itself.
+
 ---
 
 ## 2. MVP Source Strategy
@@ -70,7 +72,7 @@ Some House PDFs may be handwritten or poorly formatted.
 
 Edge-case handling rule:
 - route handwritten or low-quality PDFs to an OCR path
-- OCR options may include `AWS Textract` or a lightweight open-source vision model
+- OCR options may include an open-source OCR or vision-based extraction path
 - normalize OCR output into the same structured schema
 
 This OCR path should be exception-based, not the default flow.
@@ -151,7 +153,7 @@ Schema design rules:
 ## 9. LLM Normalization
 
 ### 9.1 Goal
-The LLM converts source input into the unified schema.
+The LLM converts extracted source content into the unified schema. The LLM is used for semantic understanding and normalization, not for source fetching or basic ingestion.
 
 ### 9.2 Input Options
 Depending on the stage, the model may receive:
@@ -165,6 +167,13 @@ Depending on the stage, the model may receive:
 - validate against schema before publish
 - keep prompt and normalization version metadata
 - use the cheapest acceptable model for MVP
+
+### 9.4 Validation Rules
+- validate required fields before publish
+- normalize enums and date formats into consistent values
+- preserve source identifiers for deduplication and provenance
+- mark failed records with validation errors for retry or review
+- publish only records that pass schema and business-rule validation
 
 ---
 

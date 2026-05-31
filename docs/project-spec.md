@@ -2,11 +2,13 @@
 
 ## 1. Purpose
 
-This specification defines the MVP and target architecture for an investment intelligence application that ingests source data, uses an LLM to convert it into a unified format, stores the structured output, and exposes it through queryable backend APIs.
+This specification defines the product vision, MVP scope, delivery phases, and target architecture for Market Intelligence Copilot.
 
-This project will follow a backend-first approach. The initial focus is accurate ingestion, normalization, schema design, and structured querying. The UI will follow after the backend data model and output quality are validated.
+The product goal is to help users make better stock and stock options buy/sell decisions by combining signals from congressional disclosures, institutional activity, whale buying, social feeds, and other market-relevant inputs into a usable intelligence workflow.
 
-Source-specific ingestion details live in [ingestion-design.md](/Users/dev/Documents/ToBeNamed/docs/ingestion-design.md).
+The product will be delivered in phases. The first phase follows a backend-first approach so ingestion quality, normalization, schema design, validation, and structured querying are reliable before a broader user-facing experience is built on top. This delivery sequence is intentional, but the product scope is broader than the backend alone.
+
+Source-specific ingestion details live in [ingestion-design-congressional.md](/Users/dev/Documents/market-copilot/docs/ingestion-design-congressional.md).
 
 ---
 
@@ -22,7 +24,8 @@ Build a production-grade GenAI application for investment research that can:
 - store raw and structured data for traceability
 - support modular expansion to multiple data sources over time
 - expose structured data through secure backend APIs
-- later power a user-facing UI for research workflows
+- support user-facing research workflows and recommendation-oriented product experiences
+- evolve toward multi-source market intelligence for decision support across stocks and options
 
 ### 2.3 MVP Focus
 The MVP will focus on one source only:
@@ -31,19 +34,23 @@ The MVP will focus on one source only:
 The MVP objective is:
 - ingest congressional source data daily
 - normalize it into a unified schema
+- validate that structured output is publishable and trustworthy
 - auto-publish validated data
 - support structured querying from the backend
+
+This MVP focus is a sequencing decision, not a statement that the product is limited to congressional workflows.
 
 ---
 
 ## 3. Delivery Principles
 
-- backend first
+- product vision first, backend-first delivery phase
 - modular multi-service design
 - simplest viable production-grade setup
 - low operational overhead
 - daily freshness for congressional data
 - LLM used for normalization into unified format
+- schema and validation quality before broad UI buildout
 - expand sources only after the first source is validated and stable
 
 ---
@@ -55,11 +62,13 @@ The MVP objective is:
 - daily ingestion for congressional data
 - PDF and XML ingestion support
 - LLM-based normalization into unified schema
+- deterministic validation rules before publication
 - raw and structured data storage
 - auto-publication of validated data
 - invite-only registration
 - profile-based access restrictions by module/domain
 - deployment on EC2 with S3 storage
+- product foundations that allow later UI and multi-source expansion without reworking the core data model
 
 ### 4.2 Out of Scope for MVP
 - institutional, social, and technical-data ingestion
@@ -67,6 +76,8 @@ The MVP objective is:
 - advanced CI/CD automation
 - extensive observability stack
 - field-level or column-level data restrictions
+
+The UI is not out of product scope. Broad UI development is simply deferred until the first source pipeline and structured dataset are stable.
 
 ---
 
@@ -87,7 +98,15 @@ The MVP objective is:
 - UI will hide restricted screens
 - backend will enforce matching domain restrictions in GraphQL resolvers and service logic
 
-### 5.3 Registration
+### 5.3 Release Gating and Admin Preview
+- domain access and domain release state are separate concerns
+- a user profile may be eligible for a domain without that domain being generally released yet
+- unreleased domains may remain visible to `admin` users for preview and validation
+- non-admin users must not see unreleased domain data or screens
+- release gating must be enforced in both the UI and backend authorization layer
+- this model should support states such as `development`, `admin_preview`, `published`, and `disabled`
+
+### 5.4 Registration
 - invite-only registration
 - user must provide a valid invite code during sign-up
 
@@ -95,7 +114,7 @@ The MVP objective is:
 
 ## 6. Architecture Direction
 
-### 6.1 Confirmed Technology Choices
+### 6.1 Confirmed Product Technology Choices
 - Frontend: `Next.js` + `React` + `TypeScript`
 - Product API: `GraphQL`-first
 - Backend services: `Python`
@@ -106,13 +125,23 @@ The MVP objective is:
 - Logging: basic structured application logs
 - Scheduling: `cron`
 
-### 6.2 What We Are Intentionally Not Using in MVP
+### 6.2 Recommended Backend Implementation Stack
+- API framework: `FastAPI`
+- GraphQL layer: `Strawberry GraphQL`
+- Data validation and contracts: `Pydantic`
+- ORM and migrations: `SQLAlchemy` + `Alembic`
+- PDF extraction: `pdfplumber` or `pypdf`
+- OCR exception path: provider-agnostic OCR or vision extraction only if handwritten or low-quality PDFs require it
+
+This stack keeps the codebase strongly typed, Python-native, and practical for a backend-first MVP without adding unnecessary operational weight. In this architecture, ingestion and base extraction remain deterministic, while the LLM is responsible for semantic normalization into the unified schema.
+
+### 6.3 What We Are Intentionally Not Using in MVP
 - no `Celery`
 - no `Redis`
 - no large observability stack
 - no complex CI/CD automation
 
-### 6.3 Why This Simpler Setup
+### 6.4 Why This Simpler Setup
 - lower setup and maintenance overhead
 - fewer moving parts to troubleshoot
 - good fit for backend-first incremental delivery
@@ -174,16 +203,30 @@ The normalization layer must support inputs such as:
 - plain text
 
 ### 9.2 Normalization Goal
-The LLM should convert source-specific input into a unified structured format.
+The LLM should convert extracted source-specific content into a unified structured format. The LLM is part of the normalization layer, not the ingestion or file-fetching layer.
 
-### 9.3 Storage Pattern
+### 9.3 Validation and Publishability Requirements
+- every normalized record must validate against the schema before publication
+- required fields must be enforced where the source format supports them
+- enums, dates, and amount ranges must be normalized into consistent representations
+- source metadata and normalized facts must remain traceable to raw source files
+- duplicate detection must prevent re-publishing the same filing or transaction unintentionally
+- failed validations must be retained with error states for retry or review rather than silently dropped
+- normalization versions must be tracked so output quality can be audited over time
+
+The published dataset is the contract that later UI, recommendation logic, and downstream workflows will rely on.
+
+### 9.4 Storage Pattern
 - store raw source files and payloads in S3
 - store structured normalized data in PostgreSQL
 - retain provenance so every published record can be traced back to its source
 
-### 9.4 Publication Model
+### 9.5 Publication Model
 - newly validated data should automatically publish
 - the backend should query from the published structured dataset
+- unpublished or failed records should remain available for operational inspection
+
+Record publication status and domain release state are different controls. A record may be valid and published within an unreleased domain while remaining visible only to admins until that domain is launched for users.
 
 ---
 
@@ -193,14 +236,17 @@ The LLM should convert source-specific input into a unified structured format.
 - GraphQL-first for product data access
 - limited REST endpoints allowed for health checks or operational needs
 
+GraphQL resolvers and service logic must enforce both user-profile access rules and domain release-state rules so unreleased modules remain admin-only until launch.
+
 ### 10.2 MVP Query Goal
 The first backend milestone is:
 - ingest data
 - normalize it
+- validate it deterministically
 - store it in structured form
 - query it reliably
 
-Once this is stable, the UI can be added on top.
+Once this foundation is stable, the UI and higher-level intelligence workflows can be built on top without reworking the core pipeline.
 
 ---
 
@@ -213,6 +259,7 @@ Start with:
 ### 11.2 Later Sources
 Later phases may add:
 - institutional / SEC sources
+- whale and unusual activity sources
 - social feeds
 - technical and fundamentals providers
 
@@ -277,7 +324,7 @@ Use a modular multi-service repository structure.
 Preferred structure:
 - separate backend API service
 - separate ingestion/normalization service
-- separate frontend later
+- separate frontend application
 - shared schema/contracts package if needed
 
 This keeps the system modular without overcomplicating the first release.
@@ -286,11 +333,12 @@ This keeps the system modular without overcomplicating the first release.
 
 ## 16. Incremental Plan
 
-### Phase 1: Backend Foundation
+### Phase 1: Data Foundation
 - define congressional schema `v1`
 - build source ingestion flow
 - parse source files
 - normalize with LLM
+- define deterministic validation rules
 - store structured output
 - support structured querying
 
@@ -299,10 +347,12 @@ This keeps the system modular without overcomplicating the first release.
 - auto-publish validated records
 - confirm freshness and daily runs
 
-### Phase 3: Frontend
+### Phase 3: Product Experience
 - add UI after backend outputs and schema are stable
 - wire UI to GraphQL backend
 - apply module-level access restrictions in UI
+- support admin preview of unreleased domains before general release
+- begin user-facing research workflows on top of the structured dataset
 
 ### Phase 4: Source Expansion
 - add additional domains only after congressional flow is reliable
@@ -315,10 +365,12 @@ This keeps the system modular without overcomplicating the first release.
 - passwords are stored securely using application-layer hashing
 - congressional data is ingested daily
 - PDF and XML inputs can be normalized into a unified schema
+- deterministic validation rules block invalid records from publication
 - validated data auto-publishes
 - structured data can be queried reliably from the backend
+- unreleased domains remain admin-only until their release state changes
 - the application runs on EC2 and uses S3 for object storage
-- the architecture stays modular and ready for later source expansion
+- the architecture stays modular and ready for later source expansion and product UI buildout
 
 ---
 
@@ -332,14 +384,15 @@ This keeps the system modular without overcomplicating the first release.
 - MVP source: congressional disclosures
 - registration: invite-only
 - publication: automatic after validation
-- development order: backend first, UI second
+- development order: backend-first foundation, then UI and broader product workflows
+- unreleased domains: admin preview before user launch
 
 ---
 
 ## 19. Immediate Next Steps
 
-1. Define the first congressional schema and publication view.
+1. Define the first congressional schema, validation rules, and publication view.
 2. Build the congressional ingestion pipeline.
-3. Validate structured output quality.
+3. Validate structured output quality and failure handling.
 4. Add stable GraphQL queries over the structured dataset.
-5. Add the UI only after backend data quality is confirmed.
+5. Begin the first user-facing workflows after backend data quality is confirmed.
