@@ -1,0 +1,1 @@
+"""Market Copilot backend package."""

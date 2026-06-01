@@ -16,9 +16,11 @@ This document is intentionally source-specific. It supports the first delivery p
 Target the House first.
 
 Primary source approach:
-- use the House Clerk daily bulk XML files
+- use the House Clerk daily bulk XML files for `2026` and forward data only
 - detect new Periodic Transaction Reports (PTRs)
 - download target PDFs referenced by those records
+
+Historical pre-2026 congressional disclosures are out of scope for the MVP and must not be intentionally fetched, benchmarked, or normalized.
 
 ### 2.2 Why Start Here
 - clear public source

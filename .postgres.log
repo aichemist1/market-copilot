@@ -1,0 +1,74 @@
+2026-05-31 11:50:46.905 CDT [22825] LOG:  starting PostgreSQL 16.14 (Homebrew) on aarch64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.4.2), 64-bit
+2026-05-31 11:50:46.909 CDT [22825] LOG:  listening on IPv6 address "::1", port 5432
+2026-05-31 11:50:46.909 CDT [22825] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2026-05-31 11:50:46.909 CDT [22825] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2026-05-31 11:50:46.912 CDT [22828] LOG:  database system was shut down at 2026-05-31 11:50:39 CDT
+2026-05-31 11:50:46.915 CDT [22825] LOG:  database system is ready to accept connections
+2026-05-31 11:51:12.938 CDT [22905] FATAL:  role "postgres" does not exist
+2026-05-31 11:51:12.940 CDT [22906] FATAL:  role "postgres" does not exist
+2026-05-31 11:51:36.406 CDT [23011] ERROR:  syntax error at or near ")" at character 714
+2026-05-31 11:51:36.406 CDT [23011] STATEMENT:  
+	CREATE TABLE ingestion_runs (
+		id UUID NOT NULL, 
+		source_type VARCHAR(64) NOT NULL, 
+		run_type VARCHAR(32) NOT NULL, 
+		status VARCHAR(32) NOT NULL, 
+		started_at TIMESTAMP WITH TIME ZONE NOT NULL, 
+		completed_at TIMESTAMP WITH TIME ZONE, 
+		files_discovered_count INTEGER DEFAULT '0' NOT NULL, 
+		files_downloaded_count INTEGER DEFAULT '0' NOT NULL, 
+		records_normalized_count INTEGER DEFAULT '0' NOT NULL, 
+		records_published_count INTEGER DEFAULT '0' NOT NULL, 
+		error_summary TEXT, 
+		created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
+		CONSTRAINT pk_ingestion_runs PRIMARY KEY (id), 
+		CONSTRAINT ck_ingestion_runs_ck_ingestion_runs_source_type_allowed CHECK (source_type IN ('congressional_house_ptr',)), 
+		CONSTRAINT ck_ingestion_runs_ck_ingestion_runs_run_type_allowed CHECK (run_type IN ('scheduled', 'manual', 'recovery')), 
+		CONSTRAINT ck_ingestion_runs_ck_ingestion_runs_status_allowed CHECK (status IN ('running', 'completed', 'completed_with_errors', 'failed'))
+	)
+	
+	
+2026-05-31 11:54:43.316 CDT [23446] FATAL:  role "ravikadiri" does not exist
+2026-05-31 11:55:46.922 CDT [22826] LOG:  checkpoint starting: time
+2026-05-31 11:57:34.244 CDT [22826] LOG:  checkpoint complete: wrote 1066 buffers (6.5%); 0 WAL file(s) added, 0 removed, 0 recycled; write=107.306 s, sync=0.011 s, total=107.324 s; sync files=378, longest=0.001 s, average=0.001 s; distance=5000 kB, estimate=5000 kB; lsn=0/19FFBF8, redo lsn=0/19FFBC0
+2026-05-31 12:05:46.285 CDT [22826] LOG:  checkpoint starting: time
+2026-05-31 12:05:48.935 CDT [22826] LOG:  checkpoint complete: wrote 27 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.642 s, sync=0.001 s, total=2.661 s; sync files=23, longest=0.001 s, average=0.001 s; distance=6 kB, estimate=4500 kB; lsn=0/1A01688, redo lsn=0/1A01650
+2026-05-31 12:06:08.047 CDT [24522] ERROR:  column "source_locator" of relation "ingestion_runs" does not exist at character 204
+2026-05-31 12:06:08.047 CDT [24522] STATEMENT:  INSERT INTO ingestion_runs (id, source_type, run_type, status, started_at, completed_at, files_discovered_count, files_downloaded_count, records_normalized_count, records_published_count, error_summary, source_locator) VALUES ($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::TIMESTAMP WITH TIME ZONE, $6::TIMESTAMP WITH TIME ZONE, $7::INTEGER, $8::INTEGER, $9::INTEGER, $10::INTEGER, $11::VARCHAR, $12::VARCHAR) RETURNING ingestion_runs.created_at
+2026-05-31 12:06:19.680 CDT [24569] ERROR:  value too long for type character varying(32)
+2026-05-31 12:06:19.680 CDT [24569] STATEMENT:  UPDATE alembic_version SET version_num='0002_add_ingestion_run_source_locator' WHERE alembic_version.version_num = '0001_phase1_core_schema'
+2026-05-31 12:06:39.214 CDT [24648] ERROR:  column "source_locator" of relation "ingestion_runs" does not exist at character 204
+2026-05-31 12:06:39.214 CDT [24648] STATEMENT:  INSERT INTO ingestion_runs (id, source_type, run_type, status, started_at, completed_at, files_discovered_count, files_downloaded_count, records_normalized_count, records_published_count, error_summary, source_locator) VALUES ($1::UUID, $2::VARCHAR, $3::VARCHAR, $4::VARCHAR, $5::TIMESTAMP WITH TIME ZONE, $6::TIMESTAMP WITH TIME ZONE, $7::INTEGER, $8::INTEGER, $9::INTEGER, $10::INTEGER, $11::VARCHAR, $12::VARCHAR) RETURNING ingestion_runs.created_at
+2026-05-31 12:10:46.927 CDT [22826] LOG:  checkpoint starting: time
+2026-05-31 12:10:48.566 CDT [22826] LOG:  checkpoint complete: wrote 17 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.630 s, sync=0.003 s, total=1.641 s; sync files=16, longest=0.002 s, average=0.001 s; distance=38 kB, estimate=4054 kB; lsn=0/1A0AFE0, redo lsn=0/1A0AFA8
+2026-05-31 12:12:21.828 CDT [25147] ERROR:  column normalization_jobs.queued_at does not exist at character 700
+2026-05-31 12:12:21.828 CDT [25147] STATEMENT:  SELECT normalization_jobs.id AS normalization_jobs_id, normalization_jobs.source_document_id AS normalization_jobs_source_document_id, normalization_jobs.source_type AS normalization_jobs_source_type, normalization_jobs.normalization_version AS normalization_jobs_normalization_version, normalization_jobs.model_name AS normalization_jobs_model_name, normalization_jobs.prompt_version AS normalization_jobs_prompt_version, normalization_jobs.status AS normalization_jobs_status, normalization_jobs.input_reference AS normalization_jobs_input_reference, normalization_jobs.output_reference AS normalization_jobs_output_reference, normalization_jobs.error_message AS normalization_jobs_error_message, normalization_jobs.queued_at AS normalization_jobs_queued_at, normalization_jobs.started_at AS normalization_jobs_started_at, normalization_jobs.completed_at AS normalization_jobs_completed_at, normalization_jobs.created_at AS normalization_jobs_created_at 
+	FROM normalization_jobs 
+	WHERE normalization_jobs.status = $1::VARCHAR ORDER BY normalization_jobs.created_at ASC 
+	 LIMIT $2::INTEGER
+2026-05-31 12:16:59.841 CDT [22826] LOG:  checkpoint starting: time
+2026-05-31 12:17:01.578 CDT [22826] LOG:  checkpoint complete: wrote 18 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.730 s, sync=0.001 s, total=1.738 s; sync files=17, longest=0.001 s, average=0.001 s; distance=33 kB, estimate=3652 kB; lsn=0/1A13620, redo lsn=0/1A135E8
+2026-05-31 12:21:59.586 CDT [22826] LOG:  checkpoint starting: time
+2026-05-31 12:22:00.112 CDT [22826] LOG:  checkpoint complete: wrote 6 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.521 s, sync=0.001 s, total=0.528 s; sync files=6, longest=0.001 s, average=0.001 s; distance=3 kB, estimate=3287 kB; lsn=0/1A14258, redo lsn=0/1A14220
+2026-05-31 17:36:04.476 CDT [22826] LOG:  checkpoint starting: time
+2026-05-31 17:36:05.511 CDT [22826] LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.026 s, sync=0.002 s, total=1.037 s; sync files=11, longest=0.001 s, average=0.001 s; distance=7 kB, estimate=2959 kB; lsn=0/1A16190, redo lsn=0/1A16158
+2026-05-31 17:38:13.377 CDT [29626] ERROR:  column "source_record_id" does not exist at character 8
+2026-05-31 17:38:13.377 CDT [29626] STATEMENT:  select source_record_id, status, created_at from normalization_jobs order by created_at desc limit 5;
+2026-05-31 17:41:04.518 CDT [22826] LOG:  checkpoint starting: time
+2026-05-31 17:41:05.953 CDT [22826] LOG:  checkpoint complete: wrote 15 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.430 s, sync=0.001 s, total=1.436 s; sync files=15, longest=0.001 s, average=0.001 s; distance=18 kB, estimate=2665 kB; lsn=0/1A1A9A8, redo lsn=0/1A1A970
+2026-05-31 17:51:05.008 CDT [22826] LOG:  checkpoint starting: time
+2026-05-31 17:51:06.332 CDT [22826] LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.318 s, sync=0.001 s, total=1.327 s; sync files=14, longest=0.001 s, average=0.001 s; distance=23 kB, estimate=2401 kB; lsn=0/1A20648, redo lsn=0/1A205D8
+2026-05-31 17:56:05.342 CDT [22826] LOG:  checkpoint starting: time
+2026-05-31 17:56:08.505 CDT [22826] LOG:  checkpoint complete: wrote 32 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.154 s, sync=0.003 s, total=3.164 s; sync files=32, longest=0.001 s, average=0.001 s; distance=31 kB, estimate=2164 kB; lsn=0/1A28230, redo lsn=0/1A281F8
+2026-05-31 18:06:05.525 CDT [22826] LOG:  checkpoint starting: time
+2026-05-31 18:06:08.689 CDT [22826] LOG:  checkpoint complete: wrote 32 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.154 s, sync=0.004 s, total=3.167 s; sync files=32, longest=0.001 s, average=0.001 s; distance=34 kB, estimate=1951 kB; lsn=0/1A30AB8, redo lsn=0/1A30A80
+2026-05-31 18:11:05.702 CDT [22826] LOG:  checkpoint starting: time
+2026-05-31 18:11:08.877 CDT [22826] LOG:  checkpoint complete: wrote 32 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.163 s, sync=0.004 s, total=3.176 s; sync files=32, longest=0.001 s, average=0.001 s; distance=39 kB, estimate=1760 kB; lsn=0/1A3AA00, redo lsn=0/1A3A9C8
+2026-05-31 18:21:38.092 CDT [22826] LOG:  checkpoint starting: time
+2026-05-31 18:21:41.250 CDT [22826] LOG:  checkpoint complete: wrote 32 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.152 s, sync=0.002 s, total=3.162 s; sync files=32, longest=0.001 s, average=0.001 s; distance=50 kB, estimate=1589 kB; lsn=0/1A47438, redo lsn=0/1A47400
+2026-05-31 18:41:38.280 CDT [22826] LOG:  checkpoint starting: time
+2026-05-31 18:41:39.615 CDT [22826] LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.326 s, sync=0.001 s, total=1.336 s; sync files=14, longest=0.001 s, average=0.001 s; distance=30 kB, estimate=1433 kB; lsn=0/1A57018, redo lsn=0/1A4EFD0
+2026-05-31 19:18:33.430 CDT [22826] LOG:  checkpoint starting: time
+2026-05-31 19:18:37.726 CDT [22826] LOG:  checkpoint complete: wrote 43 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.279 s, sync=0.005 s, total=4.297 s; sync files=38, longest=0.001 s, average=0.001 s; distance=105 kB, estimate=1300 kB; lsn=0/1A697D0, redo lsn=0/1A69798
+2026-05-31 19:23:33.732 CDT [22826] LOG:  checkpoint starting: time
+2026-05-31 19:23:36.335 CDT [22826] LOG:  checkpoint complete: wrote 26 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.588 s, sync=0.001 s, total=2.605 s; sync files=26, longest=0.001 s, average=0.001 s; distance=61 kB, estimate=1176 kB; lsn=0/1A78EC0, redo lsn=0/1A78E88

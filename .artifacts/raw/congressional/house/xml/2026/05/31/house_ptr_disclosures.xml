@@ -1,0 +1,11 @@
+<root>
+  <record>
+    <FilingID>20039999</FilingID>
+    <Name>Failure Path Sample</Name>
+    <FilingType>Periodic Transaction Report</FilingType>
+    <FilingDate>2026-05-31</FilingDate>
+    <FilingStatus>New</FilingStatus>
+    <StateDistrict>TX07</StateDistrict>
+    <PDFUrl>https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20039999.pdf</PDFUrl>
+  </record>
+</root>

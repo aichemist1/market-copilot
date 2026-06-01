@@ -1,0 +1,64 @@
+Metadata-Version: 2.4
+Name: market-copilot-backend
+Version: 0.1.0
+Summary: Backend foundation for Market Intelligence Copilot
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: alembic<2.0,>=1.13
+Requires-Dist: fastapi<1.0,>=0.115
+Requires-Dist: openai<2.0,>=1.68
+Requires-Dist: pypdf<6.0,>=5.5
+Requires-Dist: psycopg[binary]<4.0,>=3.2
+Requires-Dist: pydantic<3.0,>=2.9
+Requires-Dist: pydantic-settings<3.0,>=2.5
+Requires-Dist: sqlalchemy<3.0,>=2.0
+Requires-Dist: strawberry-graphql[fastapi]<1.0,>=0.270
+Requires-Dist: uvicorn[standard]<1.0,>=0.32
+
+# Backend
+
+This directory contains the Phase 1 backend foundation for Market Intelligence Copilot.
+
+Initial scope:
+- API service skeleton
+- ingestion service skeleton
+- SQLAlchemy models
+- Alembic migrations
+
+Planned runtime split:
+- API service
+- ingestion/normalization service
+
+Both services currently share a single Python project to keep the MVP simple while preserving a clean service boundary in code.
+
+## Local Setup
+
+1. Copy `.env.example` to `.env`.
+2. Keep `MARKET_COPILOT_NORMALIZATION_PROVIDER=stub` for local-safe development.
+3. To use the live OpenAI-backed normalization adapter, set:
+
+```bash
+MARKET_COPILOT_NORMALIZATION_PROVIDER=openai
+MARKET_COPILOT_OPENAI_API_KEY=your_key_here
+MARKET_COPILOT_OPENAI_MODEL=gpt-4.1-mini
+```
+
+## Local Commands
+
+Run the fixture XML ingestion flow:
+
+```bash
+.venv/bin/python -m market_copilot.scripts.ingest_fixture_xml
+```
+
+Run one normalization cycle for the next queued job:
+
+```bash
+.venv/bin/python -m market_copilot.scripts.run_normalization_cycle
+```
+
+Run the API locally:
+
+```bash
+.venv/bin/uvicorn market_copilot.api.app:app --reload
+```

@@ -1,0 +1,38 @@
+{
+  "filing": {
+    "source_type": "congressional_house_ptr",
+    "source_record_id": "20033330",
+    "filing_type": "Periodic Transaction Report",
+    "reporting_status": "Member",
+    "filing_date": "2025-10-22",
+    "disclosure_date": null,
+    "filing_status": "New",
+    "reporting_person": "Hon. Pete Sessions",
+    "office": null,
+    "district_or_state": "TX17",
+    "source_document_url": "https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2025/20033330.pdf",
+    "raw_text_reference": "filing-header"
+  },
+  "transactions": [
+    {
+      "transaction_index": 1,
+      "issuer_name": "VLG FL CDD #14 SPL ASSMNT REV DUE 05/01/2053 05.500%",
+      "ticker": null,
+      "asset_type": "bond",
+      "transaction_type": "purchase",
+      "transaction_date": "2025-10-24",
+      "notification_date": "2025-10-24",
+      "amount_range": "$15,001 - $50,000",
+      "owner_type": "joint",
+      "subholding": null,
+      "capital_gains_over_200": false,
+      "commentary": null,
+      "raw_text_reference": "row-1"
+    }
+  ],
+  "normalization_metadata": {
+    "normalization_version": "congressional_v1",
+    "model_name": "house_ptr_normalizer_v1",
+    "warnings": []
+  }
+}

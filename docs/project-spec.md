@@ -32,11 +32,13 @@ The MVP will focus on one source only:
 - congressional disclosures
 
 The MVP objective is:
-- ingest congressional source data daily
+- ingest `2026` and forward congressional source data daily
 - normalize it into a unified schema
 - validate that structured output is publishable and trustworthy
 - auto-publish validated data
 - support structured querying from the backend
+
+Historical pre-2026 congressional disclosures are out of scope for the MVP because they do not support the intended current and forward-looking investment workflow.
 
 This MVP focus is a sequencing decision, not a statement that the product is limited to congressional workflows.
 
