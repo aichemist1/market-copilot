@@ -1,0 +1,14 @@
+[Unit]
+Description=Market Copilot API
+After=network.target postgresql.service
+
+[Service]
+User=marketcopilot
+WorkingDirectory=/srv/market-copilot/backend
+EnvironmentFile=/etc/market-copilot/backend.env
+ExecStart=/srv/market-copilot/backend/.venv/bin/uvicorn market_copilot.api.app:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
