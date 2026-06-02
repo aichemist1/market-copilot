@@ -7,6 +7,7 @@ This checklist turns the EC2 deployment design into an execution-ready setup pat
 It assumes:
 
 - one EC2 instance
+- Amazon Linux host
 - one backend checkout at `/srv/market-copilot`
 - one backend app root at `/srv/market-copilot/backend`
 - one application user, for example `marketcopilot`
@@ -18,12 +19,14 @@ It assumes:
 - open only `22`, `80`, and `443`
 - install system packages:
   - `python3`
-  - `python3-venv`
+  - `python3-pip`
   - `nginx`
-  - `postgresql`
-  - `postgresql-contrib`
+  - `postgresql15`
+  - `postgresql15-server`
   - `git`
-  - `build-essential` if needed for dependencies
+  - `gcc`
+  - `gcc-c++`
+  - `make`
 
 ## 2. Application Directories
 
@@ -43,9 +46,19 @@ python3 -m venv .venv
 
 ## 4. PostgreSQL Setup
 
+- initialize the database cluster if this is a fresh host
+- enable and start PostgreSQL
 - create database user
 - create `market_copilot` database
 - grant application user access
+
+Typical Amazon Linux flow:
+
+```bash
+sudo /usr/bin/postgresql-setup --initdb
+sudo systemctl enable postgresql
+sudo systemctl start postgresql
+```
 
 Then run migrations:
 
