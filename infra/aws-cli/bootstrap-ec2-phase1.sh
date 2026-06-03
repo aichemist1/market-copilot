@@ -5,6 +5,7 @@ APP_USER="${APP_USER:-marketcopilot}"
 APP_ROOT="${APP_ROOT:-/srv/market-copilot}"
 APP_BACKEND_ROOT="${APP_BACKEND_ROOT:-${APP_ROOT}/backend}"
 ENV_DIR="${ENV_DIR:-/etc/market-copilot}"
+PYTHON_BIN="${PYTHON_BIN:-python3.11}"
 
 if [[ "$(id -u)" -ne 0 ]]; then
   echo "Run this script as root or with sudo."
@@ -14,8 +15,8 @@ fi
 install_packages() {
   if command -v dnf >/dev/null 2>&1; then
     dnf install -y \
-      python3 \
-      python3-pip \
+      python3.11 \
+      python3.11-pip \
       nginx \
       postgresql15 \
       postgresql15-server \
@@ -28,8 +29,8 @@ install_packages() {
 
   if command -v yum >/dev/null 2>&1; then
     yum install -y \
-      python3 \
-      python3-pip \
+      python3.11 \
+      python3.11-pip \
       nginx \
       postgresql15 \
       postgresql15-server \
@@ -59,6 +60,11 @@ install_packages() {
 }
 
 install_packages
+
+if ! command -v "${PYTHON_BIN}" >/dev/null 2>&1; then
+  echo "Required Python runtime not found: ${PYTHON_BIN}"
+  exit 1
+fi
 
 if ! id -u "${APP_USER}" >/dev/null 2>&1; then
   useradd --system --create-home --shell /bin/bash "${APP_USER}"

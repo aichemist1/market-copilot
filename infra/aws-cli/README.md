@@ -21,6 +21,7 @@ This path is intentionally lightweight for the current project stage.
 - `create-security-group.sh`
 - `launch-ec2.sh`
 - `bootstrap-ec2-phase1.sh`
+- `preflight-ec2-phase1.sh`
 - `backend.env.production.example`
 - `market-copilot-api.service`
 - `nginx-market-copilot.conf`
@@ -57,6 +58,12 @@ After the EC2 instance is running:
 5. create the PostgreSQL database and user
 6. run `install-app-on-ec2.sh` as root
 7. run `create-cron-entry.sh` as root
+
+Recommended before install:
+
+```bash
+sudo bash preflight-ec2-phase1.sh
+```
 
 ## Scope Guardrail
 
