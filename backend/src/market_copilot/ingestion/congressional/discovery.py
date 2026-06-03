@@ -13,6 +13,12 @@ from market_copilot.domain.congressional.constants import (
 
 
 PTR_KEYWORDS = ("ptr", "periodic transaction")
+PTR_FILING_TYPE_CODES = {"p"}
+PTR_FILING_TYPE_VALUES = {
+    "periodic transaction report",
+    "periodic transaction",
+    "ptr",
+}
 
 
 @dataclass(frozen=True)
@@ -58,6 +64,15 @@ def _find_pdf_url(fields: dict[str, str]) -> str | None:
 
 
 def _is_ptr_record(fields: dict[str, str], pdf_url: str | None) -> bool:
+    filing_type_value = (
+        fields.get("filingtype")
+        or fields.get("reporttype")
+        or fields.get("doctype")
+        or ""
+    ).strip().lower()
+    if filing_type_value in PTR_FILING_TYPE_CODES or filing_type_value in PTR_FILING_TYPE_VALUES:
+        return True
+
     candidate_values = " ".join(value.lower() for value in fields.values())
     if any(keyword in candidate_values for keyword in PTR_KEYWORDS):
         return True
@@ -82,6 +97,40 @@ def _extract_record_year(fields: dict[str, str], pdf_url: str | None) -> int | N
     return None
 
 
+def _build_ptr_pdf_url(source_record_id: str | None, record_year: int | None) -> str | None:
+    if not source_record_id or not record_year:
+        return None
+    return f"https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/{record_year}/{source_record_id}.pdf"
+
+
+def _compose_reporting_person(fields: dict[str, str]) -> str | None:
+    explicit_name = fields.get("name") or fields.get("filer") or fields.get("reportingperson")
+    if explicit_name:
+        return explicit_name
+
+    name_parts = [
+        fields.get("prefix"),
+        fields.get("firstname") or fields.get("first"),
+        fields.get("middlename") or fields.get("middle"),
+        fields.get("lastname") or fields.get("last"),
+        fields.get("suffix"),
+    ]
+    composed = " ".join(part.strip() for part in name_parts if part and part.strip())
+    return composed or None
+
+
+def _compose_district_or_state(fields: dict[str, str]) -> str | None:
+    explicit = fields.get("state") or fields.get("district") or fields.get("statedistrict")
+    if explicit:
+        return explicit
+
+    state = (fields.get("stateabbrev") or fields.get("statecode") or "").strip()
+    district = (fields.get("districtnumber") or fields.get("districtnum") or "").strip()
+    if state and district:
+        return f"{state}{district}"
+    return state or district or None
+
+
 def parse_house_ptr_records(xml_text: str) -> list[HousePtrDiscoveryRecord]:
     root = ET.fromstring(xml_text)
     records: list[HousePtrDiscoveryRecord] = []
@@ -95,6 +144,12 @@ def parse_house_ptr_records(xml_text: str) -> list[HousePtrDiscoveryRecord]:
         if not fields:
             continue
 
+        source_record_id = (
+            fields.get("filingid")
+            or fields.get("filing_id")
+            or fields.get("docid")
+            or fields.get("documentid")
+        )
         pdf_url = _find_pdf_url(fields)
         if not _is_ptr_record(fields, pdf_url):
             continue
@@ -103,24 +158,21 @@ def parse_house_ptr_records(xml_text: str) -> list[HousePtrDiscoveryRecord]:
         if record_year is not None and record_year < MIN_SUPPORTED_CONGRESSIONAL_YEAR:
             continue
 
-        source_record_id = (
-            fields.get("filingid")
-            or fields.get("filing_id")
-            or fields.get("docid")
-            or fields.get("documentid")
-        )
         if not source_record_id:
             continue
+
+        if pdf_url is None:
+            pdf_url = _build_ptr_pdf_url(source_record_id, record_year)
 
         records.append(
             HousePtrDiscoveryRecord(
                 source_type=SOURCE_TYPE_CONGRESSIONAL_HOUSE_PTR,
                 source_record_id=source_record_id,
                 filing_type=fields.get("filingtype") or fields.get("reporttype") or fields.get("doctype"),
-                reporting_person=fields.get("name") or fields.get("filer") or fields.get("reportingperson"),
+                reporting_person=_compose_reporting_person(fields),
                 filing_date_text=fields.get("filingdate") or fields.get("date"),
                 filing_status=fields.get("filingstatus") or fields.get("status"),
-                district_or_state=fields.get("state") or fields.get("district") or fields.get("statedistrict"),
+                district_or_state=_compose_district_or_state(fields),
                 pdf_url=pdf_url,
                 raw_xml=ET.tostring(element, encoding="unicode"),
             )
