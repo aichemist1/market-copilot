@@ -27,6 +27,30 @@ class CongressionalTransactionType:
 
 
 @strawberry.type
+class CongressionalTransactionFeedItemType:
+    id: strawberry.ID
+    source_record_id: str
+    reporting_person: str
+    district_or_state: str | None
+    source_document_url: str
+    transaction_index: int
+    issuer_name: str
+    ticker: str | None
+    asset_type: str | None
+    transaction_type: str
+    transaction_date: date | None
+    notification_date: date | None
+    amount_range: str | None
+    owner_type: str | None
+    subholding: str | None
+    capital_gains_over_200: bool | None
+    commentary: str | None
+    raw_text_reference: str | None
+    created_at: datetime
+    updated_at: datetime
+
+
+@strawberry.type
 class CongressionalFilingType:
     id: strawberry.ID
     source_type: str

@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from datetime import date
+
 from market_copilot.api.graphql.types import (
     CongressionalFilingType,
+    CongressionalTransactionFeedItemType,
     CongressionalTransactionType,
     IngestionRunType,
     ValidationMessageType,
@@ -13,6 +16,9 @@ from market_copilot.db.models import (
     IngestionRun,
     ValidationResult,
 )
+
+
+PRODUCT_TRANSACTION_START_DATE = date(2026, 1, 1)
 
 
 def map_transaction(transaction: CongressionalTransaction) -> CongressionalTransactionType:
@@ -37,7 +43,38 @@ def map_transaction(transaction: CongressionalTransaction) -> CongressionalTrans
     )
 
 
+def map_transaction_feed_item(transaction: CongressionalTransaction) -> CongressionalTransactionFeedItemType:
+    return CongressionalTransactionFeedItemType(
+        id=str(transaction.id),
+        source_record_id=transaction.filing.source_record_id,
+        reporting_person=transaction.filing.reporting_person,
+        district_or_state=transaction.filing.district_or_state,
+        source_document_url=transaction.filing.source_document_url,
+        transaction_index=transaction.transaction_index,
+        issuer_name=transaction.issuer_name,
+        ticker=transaction.ticker,
+        asset_type=transaction.asset_type,
+        transaction_type=transaction.transaction_type,
+        transaction_date=transaction.transaction_date,
+        notification_date=transaction.notification_date,
+        amount_range=transaction.amount_range,
+        owner_type=transaction.owner_type,
+        subholding=transaction.subholding,
+        capital_gains_over_200=transaction.capital_gains_over_200,
+        commentary=transaction.commentary,
+        raw_text_reference=transaction.raw_text_reference,
+        created_at=transaction.created_at,
+        updated_at=transaction.updated_at,
+    )
+
+
 def map_filing(filing: CongressionalFiling) -> CongressionalFilingType:
+    in_scope_transactions = [
+        transaction
+        for transaction in filing.transactions
+        if transaction.transaction_date is not None
+        and transaction.transaction_date >= PRODUCT_TRANSACTION_START_DATE
+    ]
     return CongressionalFilingType(
         id=str(filing.id),
         source_type=filing.source_type,
@@ -58,7 +95,7 @@ def map_filing(filing: CongressionalFiling) -> CongressionalFilingType:
         published_at=filing.published_at,
         created_at=filing.created_at,
         updated_at=filing.updated_at,
-        transactions=[map_transaction(transaction) for transaction in filing.transactions],
+        transactions=[map_transaction(transaction) for transaction in in_scope_transactions],
     )
 
 
