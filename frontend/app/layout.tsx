@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Market Copilot",
-  description: "Congressional transaction intelligence feed",
+  title: "Market Intelligence Copilot",
+  description: "Signals, trade exploration, and alerts built from market intelligence data",
 };
 
 export default function RootLayout({

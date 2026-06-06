@@ -1,0 +1,66 @@
+.summaryCard,
+.mainSection {
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: var(--shadow);
+}
+
+.mainSection {
+  padding: 24px;
+}
+
+.sectionLabel {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 1.8rem;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+}
+.state {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.summaryRow {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 20px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.summaryCard {
+  padding: 18px 20px;
+}
+
+.summaryLabel {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.summaryValue {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.sectionHeader {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 1100px) {
+  .summaryRow {
+    grid-template-columns: 1fr;
+  }
+}

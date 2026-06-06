@@ -51,6 +51,18 @@ class CongressionalTransactionFeedItemType:
 
 
 @strawberry.type
+class TickerSignalType:
+    rank: int
+    ticker: str
+    issuer_name: str | None
+    buy_count: int
+    sell_count: int
+    filer_count: int
+    latest_transaction_date: date | None
+    latest_filing_date: date | None
+
+
+@strawberry.type
 class CongressionalFilingType:
     id: strawberry.ID
     source_type: str

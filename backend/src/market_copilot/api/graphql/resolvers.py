@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import date
 
-from sqlalchemy import select
+from sqlalchemy import case, desc, func, select
 from sqlalchemy.orm import Session, joinedload, selectinload
 
 from market_copilot.db.models import CongressionalFiling, CongressionalTransaction, IngestionRun, ValidationResult
@@ -125,3 +125,68 @@ def list_recent_validation_results(
     if status:
         stmt = stmt.where(ValidationResult.status == status)
     return list(session.execute(stmt).scalars())
+
+
+def list_ticker_signals(
+    session: Session,
+    *,
+    transaction_date_from: date | None = None,
+    transaction_date_to: date | None = None,
+    limit: int = 25,
+) -> list[dict]:
+    date_from = transaction_date_from or PRODUCT_TRANSACTION_START_DATE
+
+    buy_count = func.sum(
+        case((CongressionalTransaction.transaction_type == "purchase", 1), else_=0)
+    ).label("buy_count")
+    sell_count = func.sum(
+        case((CongressionalTransaction.transaction_type == "sale", 1), else_=0)
+    ).label("sell_count")
+    filer_count = func.count(func.distinct(CongressionalFiling.reporting_person)).label("filer_count")
+    latest_transaction_date = func.max(CongressionalTransaction.transaction_date).label(
+        "latest_transaction_date"
+    )
+    latest_filing_date = func.max(CongressionalFiling.filing_date).label("latest_filing_date")
+    issuer_name = func.min(CongressionalTransaction.issuer_name).label("issuer_name")
+
+    stmt = (
+        select(
+            CongressionalTransaction.ticker.label("ticker"),
+            issuer_name,
+            buy_count,
+            sell_count,
+            filer_count,
+            latest_transaction_date,
+            latest_filing_date,
+        )
+        .join(CongressionalTransaction.filing)
+        .where(CongressionalFiling.publication_status == PUBLICATION_STATUS_PUBLISHED)
+        .where(CongressionalFiling.domain_release_state == DOMAIN_RELEASE_PUBLISHED)
+        .where(CongressionalTransaction.publication_status == PUBLICATION_STATUS_PUBLISHED)
+        .where(CongressionalTransaction.transaction_date.is_not(None))
+        .where(CongressionalTransaction.transaction_date >= date_from)
+        .where(CongressionalTransaction.ticker.is_not(None))
+        .where(CongressionalTransaction.asset_type == "stock")
+        .group_by(CongressionalTransaction.ticker)
+        .having(buy_count > 0)
+        .order_by(desc(buy_count), desc(filer_count), desc(latest_transaction_date))
+        .limit(limit)
+    )
+
+    if transaction_date_to:
+        stmt = stmt.where(CongressionalTransaction.transaction_date <= transaction_date_to)
+
+    rows = session.execute(stmt).mappings().all()
+    return [
+        {
+            "rank": index + 1,
+            "ticker": row["ticker"],
+            "issuer_name": row["issuer_name"],
+            "buy_count": int(row["buy_count"] or 0),
+            "sell_count": int(row["sell_count"] or 0),
+            "filer_count": int(row["filer_count"] or 0),
+            "latest_transaction_date": row["latest_transaction_date"],
+            "latest_filing_date": row["latest_filing_date"],
+        }
+        for index, row in enumerate(rows)
+    ]

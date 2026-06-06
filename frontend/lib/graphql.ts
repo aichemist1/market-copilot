@@ -1,5 +1,3 @@
-export type UserProfile = "basic" | "admin";
-
 export type TransactionFeedItem = {
   sourceRecordId: string;
   reportingPerson: string;
@@ -19,24 +17,18 @@ export type TransactionFeedItem = {
   commentary: string | null;
 };
 
-export type IngestionRun = {
-  id: string;
-  status: string;
-  startedAt: string;
-  completedAt: string | null;
-  filesDiscoveredCount: number;
-  recordsNormalizedCount: number;
-  recordsPublishedCount: number;
-  errorSummary: string | null;
+export type TickerSignal = {
+  rank: number;
+  ticker: string;
+  issuerName: string | null;
+  buyCount: number;
+  sellCount: number;
+  filerCount: number;
+  latestTransactionDate: string | null;
+  latestFilingDate: string | null;
 };
 
-export type DashboardPayload = {
-  transactions: TransactionFeedItem[];
-  ingestionRuns: IngestionRun[];
-};
-
-type DashboardParams = {
-  profile: UserProfile;
+export type TransactionQueryParams = {
   ticker?: string;
   reportingPerson?: string;
   transactionType?: string;
@@ -46,57 +38,14 @@ type DashboardParams = {
   limit?: number;
 };
 
-const dashboardQuery = `
-  query DashboardData(
-    $ticker: String
-    $reportingPerson: String
-    $transactionType: String
-    $assetType: String
-    $transactionDateFrom: String
-    $transactionDateTo: String
-    $limit: Int!
-  ) {
-    congressionalTransactions(
-      ticker: $ticker
-      reportingPerson: $reportingPerson
-      transactionType: $transactionType
-      assetType: $assetType
-      transactionDateFrom: $transactionDateFrom
-      transactionDateTo: $transactionDateTo
-      limit: $limit
-    ) {
-      sourceRecordId
-      reportingPerson
-      districtOrState
-      sourceDocumentUrl
-      transactionIndex
-      issuerName
-      ticker
-      assetType
-      transactionType
-      transactionDate
-      notificationDate
-      amountRange
-      ownerType
-      subholding
-      capitalGainsOver200
-      commentary
-    }
-    adminIngestionRuns(limit: 6) {
-      id
-      status
-      startedAt
-      completedAt
-      filesDiscoveredCount
-      recordsNormalizedCount
-      recordsPublishedCount
-      errorSummary
-    }
-  }
-`;
+export type TickerSignalQueryParams = {
+  transactionDateFrom?: string;
+  transactionDateTo?: string;
+  limit?: number;
+};
 
-const consumerQuery = `
-  query DashboardData(
+const transactionsQuery = `
+  query TransactionFeed(
     $ticker: String
     $reportingPerson: String
     $transactionType: String
@@ -134,15 +83,40 @@ const consumerQuery = `
   }
 `;
 
-export async function fetchDashboardData(params: DashboardParams): Promise<DashboardPayload> {
+const tickerSignalsQuery = `
+  query TickerSignals(
+    $transactionDateFrom: String
+    $transactionDateTo: String
+    $limit: Int!
+  ) {
+    tickerSignals(
+      transactionDateFrom: $transactionDateFrom
+      transactionDateTo: $transactionDateTo
+      limit: $limit
+    ) {
+      rank
+      ticker
+      issuerName
+      buyCount
+      sellCount
+      filerCount
+      latestTransactionDate
+      latestFilingDate
+    }
+  }
+`;
+
+export async function fetchTransactions(
+  params: TransactionQueryParams,
+): Promise<TransactionFeedItem[]> {
   const response = await fetch("/api/graphql", {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "x-user-profile": params.profile,
+      "x-user-profile": "basic",
     },
     body: JSON.stringify({
-      query: params.profile === "admin" ? dashboardQuery : consumerQuery,
+      query: transactionsQuery,
       variables: {
         ticker: params.ticker || null,
         reportingPerson: params.reportingPerson || null,
@@ -153,6 +127,7 @@ export async function fetchDashboardData(params: DashboardParams): Promise<Dashb
         limit: params.limit ?? 24,
       },
     }),
+    cache: "no-store",
   });
 
   const payload = await response.json();
@@ -162,8 +137,35 @@ export async function fetchDashboardData(params: DashboardParams): Promise<Dashb
     throw new Error(message);
   }
 
-  return {
-    transactions: payload.data.congressionalTransactions ?? [],
-    ingestionRuns: payload.data.adminIngestionRuns ?? [],
-  };
+  return payload.data.congressionalTransactions ?? [];
+}
+
+export async function fetchTickerSignals(
+  params: TickerSignalQueryParams,
+): Promise<TickerSignal[]> {
+  const response = await fetch("/api/graphql", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-user-profile": "basic",
+    },
+    body: JSON.stringify({
+      query: tickerSignalsQuery,
+      variables: {
+        transactionDateFrom: params.transactionDateFrom || null,
+        transactionDateTo: params.transactionDateTo || null,
+        limit: params.limit ?? 25,
+      },
+    }),
+    cache: "no-store",
+  });
+
+  const payload = await response.json();
+
+  if (!response.ok || payload.errors?.length) {
+    const message = payload.errors?.[0]?.message ?? "GraphQL request failed";
+    throw new Error(message);
+  }
+
+  return payload.data.tickerSignals ?? [];
 }

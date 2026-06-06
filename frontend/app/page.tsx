@@ -1,5 +1,5 @@
-import { CongressionalDashboard } from "@/components/congressional-dashboard";
+import { DashboardPage } from "@/components/dashboard-page";
 
 export default function HomePage() {
-  return <CongressionalDashboard />;
+  return <DashboardPage />;
 }

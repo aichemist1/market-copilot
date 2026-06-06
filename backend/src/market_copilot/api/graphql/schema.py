@@ -20,11 +20,13 @@ from market_copilot.api.graphql.resolvers import (
     list_congressional_transactions,
     list_recent_ingestion_runs,
     list_recent_validation_results,
+    list_ticker_signals,
 )
 from market_copilot.api.graphql.types import (
     CongressionalFilingType,
     CongressionalTransactionFeedItemType,
     IngestionRunType,
+    TickerSignalType,
     ValidationResultType,
 )
 from market_copilot.api.dependencies import get_db_session
@@ -78,6 +80,24 @@ class Query:
             limit=limit,
         )
         return [map_transaction_feed_item(transaction) for transaction in transactions]
+
+    @strawberry.field
+    def ticker_signals(
+        self,
+        info: strawberry.Info[GraphQLContext, None],
+        transaction_date_from: str | None = None,
+        transaction_date_to: str | None = None,
+        limit: int = 25,
+    ) -> list[TickerSignalType]:
+        parsed_date_from = date.fromisoformat(transaction_date_from) if transaction_date_from else None
+        parsed_date_to = date.fromisoformat(transaction_date_to) if transaction_date_to else None
+        signals = list_ticker_signals(
+            info.context.db,
+            transaction_date_from=parsed_date_from,
+            transaction_date_to=parsed_date_to,
+            limit=limit,
+        )
+        return [TickerSignalType(**signal) for signal in signals]
 
     @strawberry.field
     def congressional_filing(
