@@ -8,6 +8,10 @@ export type AppSession = {
 
 export const SESSION_COOKIE_NAME = "market_copilot_session";
 
+export function isAppUserProfile(value: unknown): value is AppUserProfile {
+  return value === "basic" || value === "premium" || value === "admin";
+}
+
 function getSessionSecret() {
   return process.env.MARKET_COPILOT_SESSION_SECRET ?? "market-copilot-dev-session-secret";
 }

@@ -1,11 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { SESSION_COOKIE_NAME, encodeSession } from "@/lib/auth-session";
+import { SESSION_COOKIE_NAME, encodeSession, isAppUserProfile } from "@/lib/auth-session";
 
 const graphqlEndpoint =
   process.env.MARKET_COPILOT_GRAPHQL_ENDPOINT ?? "http://127.0.0.1:8000/graphql";
 
 function resolveApiBaseUrl() {
   return process.env.MARKET_COPILOT_API_BASE_URL ?? graphqlEndpoint.replace(/\/graphql$/, "");
+}
+
+async function parseJsonResponse(response: Response) {
+  const text = await response.text();
+  if (!text) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(text) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -35,11 +48,28 @@ export async function POST(request: NextRequest) {
     cache: "no-store",
   });
 
-  const payload = await upstream.json();
+  const payload = await parseJsonResponse(upstream);
   if (!upstream.ok) {
     return NextResponse.json(
-      { error: payload.detail ?? "unable to register" },
+      {
+        error:
+          typeof payload?.detail === "string"
+            ? payload.detail
+            : `upstream registration request failed with status ${upstream.status}`,
+      },
       { status: upstream.status },
+    );
+  }
+
+  if (
+    !payload ||
+    typeof payload.user_id !== "string" ||
+    typeof payload.email !== "string" ||
+    !isAppUserProfile(payload.profile)
+  ) {
+    return NextResponse.json(
+      { error: "auth service returned an unexpected response" },
+      { status: 502 },
     );
   }
 

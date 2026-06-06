@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { SESSION_COOKIE_NAME, encodeSession } from "@/lib/auth-session";
+import { SESSION_COOKIE_NAME, encodeSession, isAppUserProfile } from "@/lib/auth-session";
 
 const graphqlEndpoint =
   process.env.MARKET_COPILOT_GRAPHQL_ENDPOINT ?? "http://127.0.0.1:8000/graphql";
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     !payload ||
     typeof payload.user_id !== "string" ||
     typeof payload.email !== "string" ||
-    typeof payload.profile !== "string"
+    !isAppUserProfile(payload.profile)
   ) {
     return NextResponse.json(
       { error: "auth service returned an unexpected response" },
