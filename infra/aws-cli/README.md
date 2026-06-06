@@ -23,9 +23,12 @@ This path is intentionally lightweight for the current project stage.
 - `bootstrap-ec2-phase1.sh`
 - `preflight-ec2-phase1.sh`
 - `backend.env.production.example`
+- `frontend.env.production.example`
 - `market-copilot-api.service`
+- `market-copilot-frontend.service`
 - `nginx-market-copilot.conf`
 - `install-app-on-ec2.sh`
+- `install-frontend-on-ec2.sh`
 - `create-cron-entry.sh`
 
 ## Usage Order
@@ -55,15 +58,35 @@ After the EC2 instance is running:
 2. run `bootstrap-ec2-phase1.sh` as root
 3. copy backend code to `/srv/market-copilot`
 4. create `/etc/market-copilot/backend.env` from `backend.env.production.example`
-5. create the PostgreSQL database and user
-6. run `install-app-on-ec2.sh` as root
-7. run `create-cron-entry.sh` as root
+5. create `/etc/market-copilot/frontend.env` from `frontend.env.production.example`
+6. create the PostgreSQL database and user
+7. run `install-app-on-ec2.sh` as root
+8. run `install-frontend-on-ec2.sh` as root
+9. run `create-cron-entry.sh` as root
 
 Recommended before install:
 
 ```bash
 sudo bash preflight-ec2-phase1.sh
 ```
+
+## Frontend Deployment Shape
+
+The first production-shaped frontend deployment is:
+
+- Next.js app running on `127.0.0.1:3000`
+- backend API running on `127.0.0.1:8000`
+- `Nginx` routing:
+  - `/` to frontend
+  - `/graphql` to backend
+  - `/health` to backend
+
+This allows public routes such as:
+
+- `/login`
+- `/register`
+- `/signals`
+- `/trade-explorer`
 
 ## Scope Guardrail
 

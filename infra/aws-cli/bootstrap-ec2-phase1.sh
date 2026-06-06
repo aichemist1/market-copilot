@@ -17,6 +17,7 @@ install_packages() {
     dnf install -y \
       python3.11 \
       python3.11-pip \
+      nodejs \
       nginx \
       postgresql15 \
       postgresql15-server \
@@ -31,6 +32,7 @@ install_packages() {
     yum install -y \
       python3.11 \
       python3.11-pip \
+      nodejs \
       nginx \
       postgresql15 \
       postgresql15-server \
@@ -47,6 +49,8 @@ install_packages() {
     apt-get install -y \
       python3 \
       python3-venv \
+      nodejs \
+      npm \
       nginx \
       postgresql \
       postgresql-contrib \
@@ -79,4 +83,5 @@ echo "1. Copy backend code into ${APP_BACKEND_ROOT}"
 echo "2. Create ${ENV_DIR}/backend.env from the template"
 echo "3. Initialize and start PostgreSQL if needed"
 echo "4. Set up PostgreSQL database/user"
-echo "5. Install Python dependencies and run migrations"
+echo "5. Install backend dependencies and run migrations"
+echo "6. Install frontend dependencies and build the app"
