@@ -30,6 +30,10 @@
   padding: 26px 28px 0;
 }
 
+.headlineBlockCompact {
+  padding: 16px 28px 0;
+}
+
 .logoWrap {
   display: inline-flex;
   align-items: center;
@@ -71,12 +75,27 @@
   letter-spacing: -0.04em;
 }
 
+.titleCompact {
+  margin: 0;
+  font-size: clamp(1.72rem, 2.8vw, 2.7rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+
 .subtitle {
   max-width: 720px;
   margin: 12px 0 0;
   color: var(--muted);
   font-size: 1.03rem;
   line-height: 1.7;
+}
+
+.subtitleCompact {
+  max-width: 760px;
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.96rem;
+  line-height: 1.55;
 }
 
 .nav {
@@ -108,7 +127,8 @@
   }
 
   .headerTop,
-  .headlineBlock {
+  .headlineBlock,
+  .headlineBlockCompact {
     padding-left: 18px;
     padding-right: 18px;
   }

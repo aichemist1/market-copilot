@@ -15,10 +15,12 @@ const navigationItems = [
 export function ProductShell({
   title,
   subtitle,
+  compactHero = false,
   children,
 }: {
   title: string;
   subtitle: string;
+  compactHero?: boolean;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -53,9 +55,9 @@ export function ProductShell({
               })}
             </nav>
           </div>
-          <div className={styles.headlineBlock}>
-            <h1 className={styles.title}>{title}</h1>
-            <p className={styles.subtitle}>{subtitle}</p>
+          <div className={compactHero ? styles.headlineBlockCompact : styles.headlineBlock}>
+            <h1 className={compactHero ? styles.titleCompact : styles.title}>{title}</h1>
+            <p className={compactHero ? styles.subtitleCompact : styles.subtitle}>{subtitle}</p>
           </div>
         </header>
 

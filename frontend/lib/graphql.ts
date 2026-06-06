@@ -69,6 +69,7 @@ export type TransactionQueryParams = {
 };
 
 export type TickerSignalQueryParams = {
+  assetType?: string;
   transactionDateFrom?: string;
   transactionDateTo?: string;
   limit?: number;
@@ -115,11 +116,13 @@ const transactionsQuery = `
 
 const tickerSignalsQuery = `
   query TickerSignals(
+    $assetType: String
     $transactionDateFrom: String
     $transactionDateTo: String
     $limit: Int!
   ) {
     tickerSignals(
+      assetType: $assetType
       transactionDateFrom: $transactionDateFrom
       transactionDateTo: $transactionDateTo
       limit: $limit
@@ -224,6 +227,7 @@ export async function fetchTickerSignals(
     body: JSON.stringify({
       query: tickerSignalsQuery,
       variables: {
+        assetType: params.assetType || null,
         transactionDateFrom: params.transactionDateFrom || null,
         transactionDateTo: params.transactionDateTo || null,
         limit: params.limit ?? 25,

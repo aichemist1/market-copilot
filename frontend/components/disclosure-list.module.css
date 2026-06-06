@@ -39,12 +39,38 @@
   font-weight: 600;
 }
 
+.memberLink,
+.tickerLink {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 140ms ease, text-decoration-color 140ms ease;
+}
+
+.memberLink {
+  font-size: 1.02rem;
+  font-weight: 600;
+}
+
 .ticker {
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink);
+}
+
+.tickerLink {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.memberLink:hover,
+.tickerLink:hover {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
 .issuer {
@@ -73,20 +99,6 @@
   color: var(--muted);
   line-height: 1.35;
   font-size: 0.8rem;
-}
-
-.ownerPill {
-  display: inline-flex;
-  align-items: center;
-  margin-top: 8px;
-  padding: 5px 9px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.76);
-  border: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 .badgeBuy,

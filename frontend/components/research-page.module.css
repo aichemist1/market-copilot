@@ -10,6 +10,36 @@
   padding: 24px;
 }
 
+.topActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.backLink,
+.inlineLink {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.backLink:hover,
+.inlineLink:hover {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.inlineActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 14px;
+}
+
 .summaryRow {
   display: grid;
   gap: 16px;
@@ -108,5 +138,14 @@
 @media (max-width: 1100px) {
   .summaryRow {
     grid-template-columns: 1fr;
+  }
+
+  .topActions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .inlineActions {
+    justify-content: flex-start;
   }
 }

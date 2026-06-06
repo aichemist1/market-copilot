@@ -138,11 +138,13 @@ def list_recent_validation_results(
 def list_ticker_signals(
     session: Session,
     *,
+    asset_type: str | None = None,
     transaction_date_from: date | None = None,
     transaction_date_to: date | None = None,
     limit: int = 25,
 ) -> list[dict]:
     date_from = transaction_date_from or PRODUCT_TRANSACTION_START_DATE
+    resolved_asset_type = asset_type or "stock"
 
     buy_count = func.sum(
         case((CongressionalTransaction.transaction_type == "purchase", 1), else_=0)
@@ -175,7 +177,7 @@ def list_ticker_signals(
         .where(CongressionalTransaction.transaction_date >= date_from)
         .where(CongressionalTransaction.transaction_date <= _product_transaction_end_date())
         .where(CongressionalTransaction.ticker.is_not(None))
-        .where(CongressionalTransaction.asset_type == "stock")
+        .where(CongressionalTransaction.asset_type == resolved_asset_type)
         .group_by(CongressionalTransaction.ticker)
         .having(buy_count > 0)
         .order_by(desc(buy_count), desc(filer_count), desc(latest_transaction_date))

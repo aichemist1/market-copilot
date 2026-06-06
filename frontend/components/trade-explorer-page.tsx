@@ -1,10 +1,10 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { DisclosureList } from "@/components/disclosure-list";
 import { ProductShell } from "@/components/product-shell";
 import { TransactionFeedItem, fetchTransactions } from "@/lib/graphql";
-import { buildSummary } from "@/lib/insights";
 import styles from "./trade-explorer-page.module.css";
 
 type Filters = {
@@ -34,10 +34,15 @@ const rangePresets = [
 ] as const;
 
 export function TradeExplorerPage() {
-  const [filters, setFilters] = useState<Filters>(defaultFilters);
+  const searchParams = useSearchParams();
+  const [filters, setFilters] = useState<Filters>(() => filtersFromSearchParams(searchParams));
   const [transactions, setTransactions] = useState<TransactionFeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setFilters(filtersFromSearchParams(searchParams));
+  }, [searchParams]);
 
   useEffect(() => {
     let cancelled = false;
@@ -72,26 +77,26 @@ export function TradeExplorerPage() {
     };
   }, [filters]);
 
-  const summary = useMemo(() => buildSummary(transactions), [transactions]);
   const activePreset = useMemo(() => resolveActivePreset(filters), [filters]);
+  const researchContext = useMemo(
+    () => buildResearchContext(filters),
+    [filters],
+  );
 
   return (
     <ProductShell
       title="Trade Explorer"
-      subtitle="Explore the disclosure stream with a cleaner list-first workflow. Filter what matters and move directly into the underlying filing when you need source detail."
+      subtitle="Explore what congressional filers bought and sold, narrow the stream fast, and move into research when a trade deserves a deeper look."
+      compactHero
     >
-      <section className={styles.summaryRow}>
-        <SummaryCard label="Visible trades" value={summary.total.toString()} />
-        <SummaryCard label="Purchases" value={summary.purchases.toString()} />
-        <SummaryCard label="Sales" value={summary.sales.toString()} />
-        <SummaryCard label="Members" value={summary.members.toString()} />
-      </section>
-
       <section className={styles.panel}>
         <div className={styles.rangeRow}>
           <div>
             <p className={styles.sectionLabel}>Explorer filters</p>
-            <h2 className={styles.sectionTitle}>Filter the disclosure stream without leaving the list view.</h2>
+            <h2 className={styles.sectionTitle}>Filter the disclosure stream without losing the trade signal.</h2>
+            <p className={styles.sectionNote}>
+              Use ticker, filer, action, asset type, and trade date to isolate the activity you want to investigate.
+            </p>
           </div>
           <div className={styles.rangeChips}>
             {rangePresets.map((preset) => {
@@ -110,6 +115,10 @@ export function TradeExplorerPage() {
             })}
           </div>
         </div>
+
+        {!loading && !error ? (
+          <p className={styles.resultMeta}>{transactions.length} visible trades in the current filtered view.</p>
+        ) : null}
 
         <div className={styles.filters}>
           <input
@@ -140,6 +149,7 @@ export function TradeExplorerPage() {
           >
             <option value="">All assets</option>
             <option value="stock">Stock</option>
+            <option value="option">Option</option>
             <option value="bond">Bond</option>
             <option value="government_security">Government security</option>
             <option value="other">Other</option>
@@ -165,20 +175,40 @@ export function TradeExplorerPage() {
         ) : null}
 
         {!loading && !error && transactions.length > 0 ? (
-          <DisclosureList transactions={transactions} />
+          <DisclosureList
+            transactions={transactions}
+            linkToResearch
+            researchContext={researchContext}
+          />
         ) : null}
       </section>
     </ProductShell>
   );
 }
 
-function SummaryCard({ label, value }: { label: string; value: string }) {
-  return (
-    <article className={styles.summaryCard}>
-      <p className={styles.summaryLabel}>{label}</p>
-      <p className={styles.summaryValue}>{value}</p>
-    </article>
-  );
+function buildResearchContext(filters: Filters) {
+  return {
+    from: "trade-explorer",
+    reportingPersonFilter: filters.reportingPerson,
+    tickerFilter: filters.ticker,
+    transactionTypeFilter: filters.transactionType,
+    assetTypeFilter: filters.assetType,
+    transactionDateFromFilter: filters.transactionDateFrom,
+    transactionDateToFilter: filters.transactionDateTo,
+  };
+}
+
+function filtersFromSearchParams(searchParams: URLSearchParams): Filters {
+  return {
+    ticker: searchParams.get("ticker") ?? defaultFilters.ticker,
+    reportingPerson: searchParams.get("reportingPerson") ?? defaultFilters.reportingPerson,
+    transactionType: searchParams.get("transactionType") ?? defaultFilters.transactionType,
+    assetType: searchParams.get("assetType") ?? defaultFilters.assetType,
+    transactionDateFrom:
+      searchParams.get("transactionDateFrom") ?? defaultFilters.transactionDateFrom,
+    transactionDateTo:
+      searchParams.get("transactionDateTo") ?? defaultFilters.transactionDateTo,
+  };
 }
 
 function applyRangePreset(filters: Filters, days: number | null): Filters {

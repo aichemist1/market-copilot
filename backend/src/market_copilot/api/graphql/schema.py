@@ -105,6 +105,7 @@ class Query:
     def ticker_signals(
         self,
         info: strawberry.Info[GraphQLContext, None],
+        asset_type: str | None = None,
         transaction_date_from: str | None = None,
         transaction_date_to: str | None = None,
         limit: int = 25,
@@ -113,6 +114,7 @@ class Query:
         parsed_date_to = date.fromisoformat(transaction_date_to) if transaction_date_to else None
         signals = list_ticker_signals(
             info.context.db,
+            asset_type=asset_type,
             transaction_date_from=parsed_date_from,
             transaction_date_to=parsed_date_to,
             limit=limit,
