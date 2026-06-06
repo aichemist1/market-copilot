@@ -8,30 +8,21 @@ function resolveApiBaseUrl() {
   return process.env.MARKET_COPILOT_API_BASE_URL ?? graphqlEndpoint.replace(/\/graphql$/, "");
 }
 
-async function parseJsonResponse(response: Response) {
-  const text = await response.text();
-  if (!text) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(text) as Record<string, unknown>;
-  } catch {
-    return null;
-  }
-}
-
 export async function POST(request: NextRequest) {
-  const { email, password } = (await request.json()) as {
+  const { email, password, inviteCode } = (await request.json()) as {
     email?: string;
     password?: string;
+    inviteCode?: string;
   };
 
-  if (!email || !password) {
-    return NextResponse.json({ error: "email and password are required" }, { status: 400 });
+  if (!email || !password || !inviteCode) {
+    return NextResponse.json(
+      { error: "email, password, and invite code are required" },
+      { status: 400 },
+    );
   }
 
-  const upstream = await fetch(`${resolveApiBaseUrl()}/auth/login`, {
+  const upstream = await fetch(`${resolveApiBaseUrl()}/auth/register`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -39,31 +30,16 @@ export async function POST(request: NextRequest) {
     body: JSON.stringify({
       email,
       password,
+      invite_code: inviteCode,
     }),
     cache: "no-store",
   });
 
-  const payload = await parseJsonResponse(upstream);
+  const payload = await upstream.json();
   if (!upstream.ok) {
-    const upstreamDetail =
-      typeof payload?.detail === "string"
-        ? payload.detail
-        : `upstream auth request failed with status ${upstream.status}`;
     return NextResponse.json(
-      { error: upstreamDetail },
+      { error: payload.detail ?? "unable to register" },
       { status: upstream.status },
-    );
-  }
-
-  if (
-    !payload ||
-    typeof payload.user_id !== "string" ||
-    typeof payload.email !== "string" ||
-    typeof payload.profile !== "string"
-  ) {
-    return NextResponse.json(
-      { error: "auth service returned an unexpected response" },
-      { status: 502 },
     );
   }
 

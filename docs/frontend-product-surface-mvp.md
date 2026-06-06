@@ -204,3 +204,9 @@ The intended trust boundary is:
 - frontend session cookie establishes user identity and profile
 - frontend GraphQL proxy derives profile from that trusted session
 - backend admin queries authorize from the trusted session-derived profile rather than a user-supplied UI toggle or caller-controlled profile hint
+
+## 12. Release Readiness
+
+The operational release gate for this product surface lives in:
+
+- [release-checklist-mvp.md](/Users/dev/Documents/market-copilot/docs/release-checklist-mvp.md)

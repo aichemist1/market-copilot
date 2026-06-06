@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import styles from "./product-shell.module.css";
 
 const navigationItems = [
@@ -23,6 +24,42 @@ export function ProductShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadSession() {
+      try {
+        const response = await fetch("/api/auth/me", {
+          cache: "no-store",
+        });
+        if (!response.ok) {
+          if (!cancelled) {
+            setIsAdmin(false);
+          }
+          return;
+        }
+
+        const payload = (await response.json()) as {
+          session?: { profile?: string } | null;
+        };
+
+        if (!cancelled) {
+          setIsAdmin(payload.session?.profile === "admin");
+        }
+      } catch {
+        if (!cancelled) {
+          setIsAdmin(false);
+        }
+      }
+    }
+
+    loadSession();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function handleSignOut() {
     await fetch("/api/auth/logout", {
@@ -40,9 +77,16 @@ export function ProductShell({
               <span className={styles.logoMark}>M</span>
               <span className={styles.logoText}>market copilot</span>
             </div>
-            <button className={styles.accountButton} onClick={handleSignOut} type="button">
-              Sign out
-            </button>
+            <div className={styles.headerActions}>
+              {isAdmin ? (
+                <Link className={styles.adminLink} href="/admin/review">
+                  Review Queue
+                </Link>
+              ) : null}
+              <button className={styles.accountButton} onClick={handleSignOut} type="button">
+                Sign out
+              </button>
+            </div>
           </div>
           <div className={styles.headerBottom}>
             <nav className={styles.nav} aria-label="Primary">

@@ -18,13 +18,14 @@ async function parseJsonResponse(response: Response) {
   }
 }
 
-export function LoginPage() {
+export function RegisterPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextParam = searchParams.get("next") ?? "/";
   const next = nextParam.startsWith("/") ? nextParam : "/";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [inviteCode, setInviteCode] = useState(searchParams.get("code") ?? "");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -34,21 +35,21 @@ export function LoginPage() {
     setError(null);
 
     try {
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, inviteCode }),
       });
       const payload = await parseJsonResponse(response);
       if (!response.ok) {
-        throw new Error(payload?.error ?? `Unable to sign in (${response.status})`);
+        throw new Error(payload?.error ?? `Unable to register (${response.status})`);
       }
       router.replace(next);
       router.refresh();
     } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : "Unable to sign in");
+      setError(nextError instanceof Error ? nextError.message : "Unable to register");
     } finally {
       setLoading(false);
     }
@@ -61,11 +62,11 @@ export function LoginPage() {
           <span className={styles.logo}>M</span>
           <div>
             <p className={styles.kicker}>Market Copilot</p>
-            <h1 className={styles.title}>Sign in</h1>
+            <h1 className={styles.title}>Register</h1>
           </div>
         </div>
         <p className={styles.subtitle}>
-          Access the current release workspace for dashboard, trade exploration, research, and signals.
+          Use your invite code to create an account and access the current release workspace.
         </p>
 
         <form className={styles.form} onSubmit={onSubmit}>
@@ -82,23 +83,33 @@ export function LoginPage() {
           <label className={styles.field}>
             <span>Password</span>
             <input
-              autoComplete="current-password"
+              autoComplete="new-password"
               className={styles.input}
               onChange={(event) => setPassword(event.target.value)}
               type="password"
               value={password}
             />
           </label>
+          <label className={styles.field}>
+            <span>Invite code</span>
+            <input
+              autoComplete="off"
+              className={styles.input}
+              onChange={(event) => setInviteCode(event.target.value.toUpperCase())}
+              type="text"
+              value={inviteCode}
+            />
+          </label>
 
           {error ? <p className={styles.error}>{error}</p> : null}
 
           <button className={styles.submit} disabled={loading} type="submit">
-            {loading ? "Signing in…" : "Sign in"}
+            {loading ? "Creating account…" : "Create account"}
           </button>
         </form>
 
         <p className={styles.footerText}>
-          Have an invite code? <Link className={styles.footerLink} href="/register">Create an account</Link>
+          Already have an account? <Link className={styles.footerLink} href="/login">Sign in</Link>
         </p>
       </section>
     </main>

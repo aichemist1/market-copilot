@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { decodeSession, SESSION_COOKIE_NAME } from "@/lib/auth-session";
 
-const AUTH_FREE_PATHS = ["/login", "/api/auth/login", "/api/auth/logout"];
+const AUTH_FREE_PATHS = [
+  "/login",
+  "/register",
+  "/api/auth/login",
+  "/api/auth/register",
+  "/api/auth/logout",
+];
 const ADMIN_ONLY_PREFIXES = ["/admin", "/alerts"];
 
 function isProtectedPath(pathname: string) {
@@ -21,7 +27,7 @@ export async function middleware(request: NextRequest) {
 
   if (AUTH_FREE_PATHS.some((path) => pathname === path)) {
     const session = await decodeSession(request.cookies.get(SESSION_COOKIE_NAME)?.value);
-    if (pathname === "/login" && session) {
+    if ((pathname === "/login" || pathname === "/register") && session) {
       return NextResponse.redirect(new URL("/", request.url));
     }
     return NextResponse.next();

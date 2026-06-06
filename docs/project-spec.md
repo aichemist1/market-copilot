@@ -114,6 +114,10 @@ Implemented but not yet released to users:
 - `Alerts`
 - `X Feed`
 
+The role-based release gate for this surface is tracked in [release-checklist-mvp.md](/Users/dev/Documents/market-copilot/docs/release-checklist-mvp.md).
+
+The first invited-user operating plan is tracked in [invited-user-rollout-plan-mvp.md](/Users/dev/Documents/market-copilot/docs/invited-user-rollout-plan-mvp.md).
+
 ---
 
 ## 5. Access Model
@@ -145,6 +149,7 @@ Implemented but not yet released to users:
 ### 5.4 Registration
 - invite-only registration
 - user must provide a valid invite code during sign-up
+- the product should support self-registration through invite codes rather than requiring manual user creation for normal onboarding
 
 ---
 

@@ -19,6 +19,7 @@ Current implemented backend surface:
 - deterministic ticker signal aggregation
 - anomaly review queue for future-dated transaction records
 - password-based sign-in endpoint for application sessions
+- invite-code registration endpoint for invite-only onboarding
 
 Planned runtime split:
 - API service
@@ -117,9 +118,16 @@ Create an initial application user:
 .venv/bin/python -m market_copilot.scripts.create_user you@example.com your_password --profile admin
 ```
 
+Create an invite code for self-registration:
+
+```bash
+.venv/bin/python -m market_copilot.scripts.create_invite_code --created-by-email admin@example.com
+```
+
 Current auth runtime behavior:
 
 - backend login endpoint: `POST /auth/login`
+- backend registration endpoint: `POST /auth/register`
 - GraphQL profile authorization is intended to be driven by a trusted app session, not a caller-supplied profile header
 - admin GraphQL queries must only be reachable through an authenticated admin session
 

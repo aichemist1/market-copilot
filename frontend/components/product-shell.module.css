@@ -20,6 +20,19 @@
   padding: 22px 28px 18px;
 }
 
+.headerActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.adminLink {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
 .headerBottom {
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
