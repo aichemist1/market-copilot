@@ -178,7 +178,7 @@ async def build_context(
     request: Request,
     db=Depends(get_db_session),
 ) -> GraphQLContext:
-    user_profile = request.headers.get("x-user-profile", "admin")
+    user_profile = request.headers.get("x-user-profile", "basic")
     return GraphQLContext(db=db, user_profile=user_profile)
 
 

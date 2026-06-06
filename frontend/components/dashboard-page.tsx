@@ -64,8 +64,8 @@ export function DashboardPage() {
   );
   return (
     <ProductShell
-      title="A clearer view of current market disclosures."
-      subtitle="Use the dashboard to stay oriented, then move into Trade Explorer or Signals when you want a sharper answer."
+      title="Dashboard"
+      subtitle="A current view of congressional trading activity, with quick paths into deeper research and ranked signals."
     >
       <section className={styles.summaryRow}>
         <SummaryCard label="Published disclosures" value={(metrics?.disclosureCount ?? 0).toString()} />
@@ -79,7 +79,7 @@ export function DashboardPage() {
           <div>
             <p className={styles.sectionLabel}>Recent disclosures</p>
             <p className={styles.sectionNote}>
-              Recent disclosed trades grouped into cleaner signal rows before you drill into research.
+              A recent sample of grouped trade signals. Open Research for the filing context or Trade Explorer for the full stream.
             </p>
           </div>
           <Link className={styles.sectionLink} href="/trade-explorer">
@@ -90,13 +90,13 @@ export function DashboardPage() {
         {error ? <p className={styles.state}>{error}</p> : null}
         {loading ? <p className={styles.state}>Loading disclosures…</p> : null}
         {!loading && !error && transactions.length === 0 ? (
-          <p className={styles.state}>No disclosures are available yet.</p>
+          <p className={styles.state}>No disclosures are available right now. Try Trade Explorer for a broader search.</p>
         ) : null}
 
         {!loading && !error && groupedDisclosures.length > 0 ? (
           <>
             <p className={styles.sampleNote}>
-              Showing {groupedDisclosures.length} grouped disclosures from the latest 10 in-scope trades.
+              Showing {groupedDisclosures.length} grouped disclosures from the latest 10 qualifying trades.
             </p>
             <DashboardDisclosureList groups={groupedDisclosures} />
           </>

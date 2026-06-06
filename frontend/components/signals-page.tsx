@@ -61,7 +61,7 @@ export function SignalsPage() {
   return (
     <ProductShell
       title="Signals"
-      subtitle="Popular buy signals built from deterministic disclosure aggregates, with explicit asset views and time windows so the ranking stays usable and trustworthy."
+      subtitle="Popular buy signals ranked from recent congressional disclosure activity, with asset views and time windows that keep the list focused."
       compactHero
     >
       <section className={styles.panel}>
@@ -70,7 +70,7 @@ export function SignalsPage() {
             <p className={styles.sectionLabel}>Popular buy tickers</p>
             <h2 className={styles.sectionTitle}>Ranked by recent buy disclosures across distinct filers.</h2>
             <p className={styles.sectionNote}>
-              Use the asset view and date window to focus the ranking, then pivot into research or the filtered disclosure stream.
+              Use the asset view and date window to focus the ranking, then move into Research or Trade Explorer from the names that stand out.
             </p>
           </div>
           <div className={styles.controls}>
@@ -104,7 +104,7 @@ export function SignalsPage() {
         {error ? <p className={styles.state}>{error}</p> : null}
         {loading ? <p className={styles.state}>Loading signals…</p> : null}
         {!loading && !error && signals.length === 0 ? (
-          <p className={styles.state}>No ticker signals are available yet.</p>
+          <p className={styles.state}>No signals matched this view. Try a wider date range or switch asset types.</p>
         ) : null}
 
         {!loading && !error && signals.length > 0 ? (

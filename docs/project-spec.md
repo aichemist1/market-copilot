@@ -90,12 +90,29 @@ Implemented user-facing pages:
 - `Trade Explorer`
 - `Research`
 - `Signals`
-- `Alerts`
 
 Planned but still gated:
+- `Alerts`
 - `X Feed`
 
 Admin-only capabilities remain separate from the main user navigation and are accessed through backend/admin flows rather than being embedded into the consumer product shell.
+
+### 4.4 First Release Matrix
+
+User-visible in the first release candidate:
+- `Dashboard`
+- `Trade Explorer`
+- `Research`
+- `Signals`
+
+Admin-only:
+- review queue and anomaly inspection
+- backend admin GraphQL queries
+- ingestion and operational tooling
+
+Implemented but not yet released to users:
+- `Alerts`
+- `X Feed`
 
 ---
 
@@ -115,6 +132,7 @@ Admin-only capabilities remain separate from the main user navigation and are ac
 - access is enforced at screen/module/domain level
 - UI will hide restricted screens
 - backend will enforce matching domain restrictions in GraphQL resolvers and service logic
+- authenticated session state, not caller-provided profile hints, should be the trust source for release gating and admin-only surfaces
 
 ### 5.3 Release Gating and Admin Preview
 - domain access and domain release state are separate concerns

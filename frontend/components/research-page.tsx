@@ -84,7 +84,7 @@ export function ResearchPage() {
   return (
     <ProductShell
       title="Research"
-      subtitle="Investigate a dashboard disclosure in context: the focal filing first, then what else the same filer traded."
+      subtitle="Start with the focal filing, then widen into related activity from the same filer or ticker."
     >
       <div className={styles.topActions}>
         {from === "trade-explorer" ? (
@@ -125,7 +125,7 @@ export function ResearchPage() {
         {error ? <p className={styles.state}>{error}</p> : null}
         {loading ? <p className={styles.state}>Loading research…</p> : null}
         {!loading && !error && !filing && transactions.length === 0 ? (
-          <p className={styles.state}>No in-scope disclosures matched this research view.</p>
+          <p className={styles.state}>No matching trades were found for this research view. Return to Trade Explorer and broaden the search.</p>
         ) : null}
 
         {!loading && !error && filing ? (
@@ -222,7 +222,7 @@ function buildFocalSummary({
   ticker: string;
 }) {
   if (!filing) {
-    return "Review the filing-level context first, then move into the filer’s broader trading pattern.";
+    return "Start with the filing-level context, then widen into the filer’s broader trading pattern.";
   }
 
   const otherTickerCount = new Set(

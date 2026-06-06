@@ -4,6 +4,7 @@ src/market_copilot/__init__.py
 src/market_copilot/settings.py
 src/market_copilot/api/__init__.py
 src/market_copilot/api/app.py
+src/market_copilot/api/auth.py
 src/market_copilot/api/dependencies.py
 src/market_copilot/api/testing.py
 src/market_copilot/api/graphql/__init__.py
@@ -12,6 +13,8 @@ src/market_copilot/api/graphql/mappers.py
 src/market_copilot/api/graphql/resolvers.py
 src/market_copilot/api/graphql/schema.py
 src/market_copilot/api/graphql/types.py
+src/market_copilot/auth/__init__.py
+src/market_copilot/auth/security.py
 src/market_copilot/db/__init__.py
 src/market_copilot/db/base.py
 src/market_copilot/db/bootstrap.py
@@ -41,7 +44,11 @@ src/market_copilot/normalization/adapters.py
 src/market_copilot/repositories/__init__.py
 src/market_copilot/repositories/congressional.py
 src/market_copilot/scripts/__init__.py
+src/market_copilot/scripts/create_user.py
+src/market_copilot/scripts/ingest_eval_sample.py
+src/market_copilot/scripts/ingest_failure_fixture_xml.py
 src/market_copilot/scripts/ingest_fixture_xml.py
+src/market_copilot/scripts/requeue_normalization_jobs.py
 src/market_copilot/scripts/run_normalization_cycle.py
 src/market_copilot/services/__init__.py
 src/market_copilot/services/congressional.py
@@ -50,3 +57,6 @@ src/market_copilot_backend.egg-info/SOURCES.txt
 src/market_copilot_backend.egg-info/dependency_links.txt
 src/market_copilot_backend.egg-info/requires.txt
 src/market_copilot_backend.egg-info/top_level.txt
+tests/test_auth_security.py
+tests/test_graphql_mappers.py
+tests/test_source_fallbacks.py

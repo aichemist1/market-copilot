@@ -72,3 +72,249 @@
 2026-05-31 19:18:37.726 CDT [22826] LOG:  checkpoint complete: wrote 43 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.279 s, sync=0.005 s, total=4.297 s; sync files=38, longest=0.001 s, average=0.001 s; distance=105 kB, estimate=1300 kB; lsn=0/1A697D0, redo lsn=0/1A69798
 2026-05-31 19:23:33.732 CDT [22826] LOG:  checkpoint starting: time
 2026-05-31 19:23:36.335 CDT [22826] LOG:  checkpoint complete: wrote 26 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.588 s, sync=0.001 s, total=2.605 s; sync files=26, longest=0.001 s, average=0.001 s; distance=61 kB, estimate=1176 kB; lsn=0/1A78EC0, redo lsn=0/1A78E88
+2026-06-06 15:49:33.094 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:33.096 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:34.096 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:34.097 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:35.098 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:35.099 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:36.099 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:36.099 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:37.100 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:37.100 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:38.102 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:38.102 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:39.105 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:39.105 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:40.106 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:40.106 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:41.107 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:41.107 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:42.108 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:42.108 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:43.110 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:43.110 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:44.111 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:44.111 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:45.113 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:45.113 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:46.114 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:46.114 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:47.115 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:47.115 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:48.116 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:48.116 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:49.117 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:49.118 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:50.118 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:50.118 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:51.119 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:51.121 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:52.122 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:52.122 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:53.123 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:53.123 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:54.124 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:54.124 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:55.125 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:55.126 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:56.126 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:56.126 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:57.128 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:57.128 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:58.129 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:58.129 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:49:59.130 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:49:59.130 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:00.132 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:00.132 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:01.133 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:01.133 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:02.134 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:02.134 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:03.136 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:03.136 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:04.137 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:04.137 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:05.138 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:05.138 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:06.139 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:06.140 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:07.141 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:07.141 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:08.142 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:08.142 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:09.143 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:09.143 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:10.144 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:10.144 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:11.145 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:11.145 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:12.146 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:12.146 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:13.147 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:13.147 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:14.148 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:14.148 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:15.148 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:15.148 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:16.150 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:16.150 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:17.150 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:17.150 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:18.152 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:18.152 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:19.153 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:19.154 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:20.155 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:20.155 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:21.155 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:21.156 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:22.156 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:22.156 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:23.157 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:23.157 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:24.158 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:24.158 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:25.159 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:25.159 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:26.160 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:26.160 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:27.161 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:27.161 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:28.162 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:28.162 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:29.164 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:29.164 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:30.164 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:30.165 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:31.166 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:31.166 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:32.167 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:32.167 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:33.168 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:33.168 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:34.168 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:34.168 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:35.169 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:35.170 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:36.171 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:36.171 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:37.172 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:37.172 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:38.173 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:38.174 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:39.175 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:39.175 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:40.176 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:40.176 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:41.177 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:41.177 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:42.178 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:42.178 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:43.180 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:43.180 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:44.181 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:44.182 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:45.183 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:45.183 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:46.185 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:46.185 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:47.186 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:47.186 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:48.189 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:48.190 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:49.191 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:49.191 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:50.192 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:50.192 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:51.193 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:51.194 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:52.195 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:52.195 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:53.197 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:53.197 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:54.198 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:54.198 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:55.202 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:55.202 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:56.204 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:56.204 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:57.204 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:57.204 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:58.206 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:58.207 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:50:59.209 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:50:59.211 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:00.216 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:00.219 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:01.220 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:01.221 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:02.223 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:02.223 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:03.224 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:03.224 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:04.225 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:04.225 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:05.226 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:05.226 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:06.227 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:06.228 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:07.229 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:07.229 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:08.229 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:08.230 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:09.230 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:09.230 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:10.231 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:10.231 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:11.232 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:11.232 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:12.233 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:12.233 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:13.234 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:13.234 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:14.235 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:14.235 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:15.236 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:15.237 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:16.238 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:16.238 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:17.239 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:17.239 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:18.240 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:18.240 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:19.241 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:19.241 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:20.242 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:20.242 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:21.246 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:21.247 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:22.251 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:22.251 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:23.252 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:23.252 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:24.253 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:24.254 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:25.255 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:25.255 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:26.256 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:26.256 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:27.257 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:27.257 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:28.257 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:28.257 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:29.258 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:29.259 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:30.260 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:30.260 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:31.260 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:31.260 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:32.262 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:32.262 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:33.263 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:33.263 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:34.264 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:34.264 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory
+2026-06-06 15:51:35.265 CDT [22826] LOG:  checkpoint starting: time
+2026-06-06 15:51:35.265 CDT [22826] ERROR:  could not open directory "pg_logical/snapshots": No such file or directory

@@ -9,7 +9,6 @@ const navigationItems = [
   { href: "/trade-explorer", label: "Trade Explorer" },
   { href: "/research", label: "Research" },
   { href: "/signals", label: "Signals" },
-  { href: "/alerts", label: "Alerts" },
 ];
 
 export function ProductShell({
@@ -25,6 +24,13 @@ export function ProductShell({
 }) {
   const pathname = usePathname();
 
+  async function handleSignOut() {
+    await fetch("/api/auth/logout", {
+      method: "POST",
+    });
+    window.location.href = "/login";
+  }
+
   return (
     <main className={styles.page}>
       <div className={styles.shell}>
@@ -34,8 +40,8 @@ export function ProductShell({
               <span className={styles.logoMark}>M</span>
               <span className={styles.logoText}>market copilot</span>
             </div>
-            <button className={styles.accountButton} type="button">
-              Account
+            <button className={styles.accountButton} onClick={handleSignOut} type="button">
+              Sign out
             </button>
           </div>
           <div className={styles.headerBottom}>

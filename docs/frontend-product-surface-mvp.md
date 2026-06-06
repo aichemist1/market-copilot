@@ -9,17 +9,21 @@ It does not document troubleshooting history, deployment issues, or unfinished i
 
 ## 1. Navigation
 
-Current top-level product navigation:
+Current first-release top-level product navigation:
 
 - `Dashboard`
 - `Trade Explorer`
 - `Research`
 - `Signals`
-- `Alerts`
 
 Reserved for later gated release:
 
+- `Alerts`
 - `X Feed`
+
+Admin-only and intentionally out of the main user nav:
+
+- `Review Queue` at `/admin/review`
 
 These tabs are product concepts, not source-system names. The UI should stay organized around user intent rather than exposing internal ingestion categories such as congressional, institutional, whale, or other source labels as primary navigation.
 
@@ -130,6 +134,7 @@ Purpose:
 Current state:
 
 - alerts remain intentionally restrained until the signal logic is strong enough to trust
+- the page exists in the codebase, but it is not part of the first user-visible navigation set
 
 ## 7. Product Scope Rules Reflected in the UI
 
@@ -152,3 +157,50 @@ The current frontend follows these interaction principles:
 - make traversal obvious
 - reduce repeated visual noise
 - preserve room for future source expansion without changing the top-level product concepts
+
+## 9. Admin Review Workflow
+
+The current admin review workflow is intentionally narrow and operational:
+
+- future-dated or otherwise suspicious transaction anomalies remain out of user-facing product views
+- those rows remain visible to admins through the `Review Queue`
+- failed validation outputs remain inspectable in the same admin review surface
+
+Current admin review route:
+
+- `/admin/review`
+
+## 10. First Release Matrix
+
+User-visible in the first release candidate:
+
+- `Dashboard`
+- `Trade Explorer`
+- `Research`
+- `Signals`
+
+Admin-only:
+
+- `Review Queue`
+- backend admin anomaly and validation queries
+- ingestion and operational tooling
+
+Implemented but not released to users yet:
+
+- `Alerts`
+- `X Feed`
+
+## 11. Access and Session Model
+
+Current first-release access behavior:
+
+- the visible product surface requires sign-in
+- `Dashboard`, `Trade Explorer`, `Research`, and `Signals` are authenticated user pages
+- `Review Queue` remains admin-only and must not be reachable by basic users through direct URL entry
+- `Alerts` remains implemented but gated out of the first user release
+
+The intended trust boundary is:
+
+- frontend session cookie establishes user identity and profile
+- frontend GraphQL proxy derives profile from that trusted session
+- backend admin queries authorize from the trusted session-derived profile rather than a user-supplied UI toggle or caller-controlled profile hint

@@ -86,16 +86,16 @@ export function TradeExplorerPage() {
   return (
     <ProductShell
       title="Trade Explorer"
-      subtitle="Explore what congressional filers bought and sold, narrow the stream fast, and move into research when a trade deserves a deeper look."
+      subtitle="Browse what congressional filers bought and sold, narrow the stream quickly, and open Research when a trade deserves a closer look."
       compactHero
     >
       <section className={styles.panel}>
         <div className={styles.rangeRow}>
           <div>
             <p className={styles.sectionLabel}>Explorer filters</p>
-            <h2 className={styles.sectionTitle}>Filter the disclosure stream without losing the trade signal.</h2>
+            <h2 className={styles.sectionTitle}>Filter the stream without losing the trade signal.</h2>
             <p className={styles.sectionNote}>
-              Use ticker, filer, action, asset type, and trade date to isolate the activity you want to investigate.
+              Use ticker, filer, action, asset type, and trade date to isolate the activity you want to investigate next.
             </p>
           </div>
           <div className={styles.rangeChips}>
@@ -171,7 +171,7 @@ export function TradeExplorerPage() {
         {error ? <p className={styles.state}>{error}</p> : null}
         {loading ? <p className={styles.state}>Loading trade explorer…</p> : null}
         {!loading && !error && transactions.length === 0 ? (
-          <p className={styles.state}>No in-scope disclosures matched the current filters.</p>
+          <p className={styles.state}>No trades matched the current filters. Widen the dates or remove a filter to keep exploring.</p>
         ) : null}
 
         {!loading && !error && transactions.length > 0 ? (

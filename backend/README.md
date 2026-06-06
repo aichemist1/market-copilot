@@ -18,6 +18,7 @@ Current implemented backend surface:
 - admin-only operational GraphQL queries
 - deterministic ticker signal aggregation
 - anomaly review queue for future-dated transaction records
+- password-based sign-in endpoint for application sessions
 
 Planned runtime split:
 - API service
@@ -103,6 +104,24 @@ Run the API locally:
 ```bash
 .venv/bin/uvicorn market_copilot.api.app:app --reload
 ```
+
+Run the lightweight backend acceptance tests:
+
+```bash
+python3 -m unittest discover -s tests
+```
+
+Create an initial application user:
+
+```bash
+.venv/bin/python -m market_copilot.scripts.create_user you@example.com your_password --profile admin
+```
+
+Current auth runtime behavior:
+
+- backend login endpoint: `POST /auth/login`
+- GraphQL profile authorization is intended to be driven by a trusted app session, not a caller-supplied profile header
+- admin GraphQL queries must only be reachable through an authenticated admin session
 
 ## Current GraphQL Surface
 
