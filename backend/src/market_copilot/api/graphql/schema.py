@@ -19,10 +19,12 @@ from market_copilot.api.graphql.resolvers import (
     list_congressional_filings,
     list_congressional_transactions,
     list_recent_ingestion_runs,
+    list_transaction_anomalies,
     list_recent_validation_results,
     list_ticker_signals,
 )
 from market_copilot.api.graphql.types import (
+    AdminTransactionAnomalyType,
     CongressionalFilingType,
     CongressionalTransactionFeedItemType,
     IngestionRunType,
@@ -137,6 +139,16 @@ class Query:
             limit=limit,
         )
         return [map_validation_result(result) for result in results]
+
+    @strawberry.field
+    def admin_transaction_anomalies(
+        self,
+        info: strawberry.Info[GraphQLContext, None],
+        limit: int = 50,
+    ) -> list[AdminTransactionAnomalyType]:
+        _require_admin(info.context)
+        anomalies = list_transaction_anomalies(info.context.db, limit=limit)
+        return [AdminTransactionAnomalyType(**anomaly) for anomaly in anomalies]
 
 
 schema = strawberry.Schema(query=Query)

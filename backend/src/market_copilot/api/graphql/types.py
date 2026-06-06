@@ -63,6 +63,24 @@ class TickerSignalType:
 
 
 @strawberry.type
+class AdminTransactionAnomalyType:
+    source_record_id: str
+    reporting_person: str
+    district_or_state: str | None
+    filing_date: date | None
+    transaction_index: int
+    issuer_name: str
+    ticker: str | None
+    transaction_type: str
+    transaction_date: date | None
+    notification_date: date | None
+    amount_range: str | None
+    source_document_url: str
+    anomaly_code: str
+    anomaly_message: str
+
+
+@strawberry.type
 class CongressionalFilingType:
     id: strawberry.ID
     source_type: str

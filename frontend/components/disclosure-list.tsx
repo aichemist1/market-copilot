@@ -14,7 +14,7 @@ export function DisclosureList({
         <span>Disclosure</span>
         <span>Action</span>
         <span>Amount</span>
-        <span>Transaction Date</span>
+        <span>Trade Date</span>
       </div>
 
       {transactions.map((transaction) => (

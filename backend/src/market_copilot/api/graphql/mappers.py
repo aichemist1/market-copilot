@@ -21,6 +21,14 @@ from market_copilot.db.models import (
 PRODUCT_TRANSACTION_START_DATE = date(2026, 1, 1)
 
 
+def _is_product_transaction_in_scope(transaction_date: date | None) -> bool:
+    return (
+        transaction_date is not None
+        and transaction_date >= PRODUCT_TRANSACTION_START_DATE
+        and transaction_date <= date.today()
+    )
+
+
 def map_transaction(transaction: CongressionalTransaction) -> CongressionalTransactionType:
     return CongressionalTransactionType(
         id=str(transaction.id),
@@ -72,8 +80,7 @@ def map_filing(filing: CongressionalFiling) -> CongressionalFilingType:
     in_scope_transactions = [
         transaction
         for transaction in filing.transactions
-        if transaction.transaction_date is not None
-        and transaction.transaction_date >= PRODUCT_TRANSACTION_START_DATE
+        if _is_product_transaction_in_scope(transaction.transaction_date)
     ]
     return CongressionalFilingType(
         id=str(filing.id),

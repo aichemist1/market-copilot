@@ -15,6 +15,10 @@ from market_copilot.domain.congressional.constants import (
 PRODUCT_TRANSACTION_START_DATE = date(2026, 1, 1)
 
 
+def _product_transaction_end_date() -> date:
+    return date.today()
+
+
 def list_congressional_filings(
     session: Session,
     *,
@@ -29,7 +33,8 @@ def list_congressional_filings(
         .where(CongressionalFiling.domain_release_state == DOMAIN_RELEASE_PUBLISHED)
         .where(
             CongressionalFiling.transactions.any(
-                CongressionalTransaction.transaction_date >= PRODUCT_TRANSACTION_START_DATE
+                (CongressionalTransaction.transaction_date >= PRODUCT_TRANSACTION_START_DATE)
+                & (CongressionalTransaction.transaction_date <= _product_transaction_end_date())
             )
         )
         .order_by(CongressionalFiling.filing_date.desc(), CongressionalFiling.created_at.desc())
@@ -44,6 +49,7 @@ def list_congressional_filings(
             CongressionalFiling.transactions.any(
                 (CongressionalTransaction.ticker == ticker.upper())
                 & (CongressionalTransaction.transaction_date >= PRODUCT_TRANSACTION_START_DATE)
+                & (CongressionalTransaction.transaction_date <= _product_transaction_end_date())
             )
         )
 
@@ -63,7 +69,8 @@ def get_congressional_filing_by_source_record_id(
         .where(CongressionalFiling.domain_release_state == DOMAIN_RELEASE_PUBLISHED)
         .where(
             CongressionalFiling.transactions.any(
-                CongressionalTransaction.transaction_date >= PRODUCT_TRANSACTION_START_DATE
+                (CongressionalTransaction.transaction_date >= PRODUCT_TRANSACTION_START_DATE)
+                & (CongressionalTransaction.transaction_date <= _product_transaction_end_date())
             )
         )
     )
@@ -92,6 +99,7 @@ def list_congressional_transactions(
         .where(CongressionalTransaction.publication_status == PUBLICATION_STATUS_PUBLISHED)
         .where(CongressionalTransaction.transaction_date.is_not(None))
         .where(CongressionalTransaction.transaction_date >= date_from)
+        .where(CongressionalTransaction.transaction_date <= _product_transaction_end_date())
         .order_by(CongressionalTransaction.transaction_date.desc(), CongressionalTransaction.created_at.desc())
         .limit(limit)
     )
@@ -165,6 +173,7 @@ def list_ticker_signals(
         .where(CongressionalTransaction.publication_status == PUBLICATION_STATUS_PUBLISHED)
         .where(CongressionalTransaction.transaction_date.is_not(None))
         .where(CongressionalTransaction.transaction_date >= date_from)
+        .where(CongressionalTransaction.transaction_date <= _product_transaction_end_date())
         .where(CongressionalTransaction.ticker.is_not(None))
         .where(CongressionalTransaction.asset_type == "stock")
         .group_by(CongressionalTransaction.ticker)
@@ -189,4 +198,44 @@ def list_ticker_signals(
             "latest_filing_date": row["latest_filing_date"],
         }
         for index, row in enumerate(rows)
+    ]
+
+
+def list_transaction_anomalies(
+    session: Session,
+    *,
+    limit: int = 50,
+) -> list[dict]:
+    today = _product_transaction_end_date()
+    stmt = (
+        select(CongressionalTransaction, CongressionalFiling)
+        .join(CongressionalTransaction.filing)
+        .where(CongressionalTransaction.transaction_date.is_not(None))
+        .where(CongressionalTransaction.transaction_date > today)
+        .order_by(CongressionalTransaction.transaction_date.desc(), CongressionalTransaction.created_at.desc())
+        .limit(limit)
+    )
+
+    rows = session.execute(stmt).all()
+    return [
+        {
+            "source_record_id": filing.source_record_id,
+            "reporting_person": filing.reporting_person,
+            "district_or_state": filing.district_or_state,
+            "filing_date": filing.filing_date,
+            "transaction_index": transaction.transaction_index,
+            "issuer_name": transaction.issuer_name,
+            "ticker": transaction.ticker,
+            "transaction_type": transaction.transaction_type,
+            "transaction_date": transaction.transaction_date,
+            "notification_date": transaction.notification_date,
+            "amount_range": transaction.amount_range,
+            "source_document_url": filing.source_document_url,
+            "anomaly_code": "future_transaction_date",
+            "anomaly_message": (
+                f"Trade date {transaction.transaction_date.isoformat()} is after the current product date "
+                f"{today.isoformat()} and requires admin review."
+            ),
+        }
+        for transaction, filing in rows
     ]
