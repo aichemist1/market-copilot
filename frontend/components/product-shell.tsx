@@ -7,6 +7,7 @@ import styles from "./product-shell.module.css";
 const navigationItems = [
   { href: "/", label: "Dashboard" },
   { href: "/trade-explorer", label: "Trade Explorer" },
+  { href: "/research", label: "Research" },
   { href: "/signals", label: "Signals" },
   { href: "/alerts", label: "Alerts" },
 ];

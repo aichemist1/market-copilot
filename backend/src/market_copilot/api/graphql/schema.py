@@ -15,6 +15,7 @@ from market_copilot.api.graphql.mappers import (
     map_validation_result,
 )
 from market_copilot.api.graphql.resolvers import (
+    get_dashboard_metrics,
     get_congressional_filing_by_source_record_id,
     list_congressional_filings,
     list_congressional_transactions,
@@ -27,6 +28,7 @@ from market_copilot.api.graphql.types import (
     AdminTransactionAnomalyType,
     CongressionalFilingType,
     CongressionalTransactionFeedItemType,
+    DashboardMetricsType,
     IngestionRunType,
     TickerSignalType,
     ValidationResultType,
@@ -41,6 +43,22 @@ def _require_admin(context: GraphQLContext) -> None:
 
 @strawberry.type
 class Query:
+    @strawberry.field
+    def dashboard_metrics(
+        self,
+        info: strawberry.Info[GraphQLContext, None],
+        transaction_date_from: str | None = None,
+        transaction_date_to: str | None = None,
+    ) -> DashboardMetricsType:
+        parsed_date_from = date.fromisoformat(transaction_date_from) if transaction_date_from else None
+        parsed_date_to = date.fromisoformat(transaction_date_to) if transaction_date_to else None
+        metrics = get_dashboard_metrics(
+            info.context.db,
+            transaction_date_from=parsed_date_from,
+            transaction_date_to=parsed_date_to,
+        )
+        return DashboardMetricsType(**metrics)
+
     @strawberry.field
     def congressional_filings(
         self,

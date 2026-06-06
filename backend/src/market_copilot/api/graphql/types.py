@@ -81,6 +81,14 @@ class AdminTransactionAnomalyType:
 
 
 @strawberry.type
+class DashboardMetricsType:
+    disclosure_count: int
+    buy_count: int
+    sell_count: int
+    filer_count: int
+
+
+@strawberry.type
 class CongressionalFilingType:
     id: strawberry.ID
     source_type: str

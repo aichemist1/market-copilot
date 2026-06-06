@@ -71,6 +71,7 @@ This MVP focus is a sequencing decision, not a statement that the product is lim
 - profile-based access restrictions by module/domain
 - deployment on EC2 with S3 storage
 - product foundations that allow later UI and multi-source expansion without reworking the core data model
+- a first user-facing product shell with overview, exploration, research, and signal workflows over the published dataset
 
 ### 4.2 Out of Scope for MVP
 - institutional, social, and technical-data ingestion
@@ -80,6 +81,21 @@ This MVP focus is a sequencing decision, not a statement that the product is lim
 - field-level or column-level data restrictions
 
 The UI is not out of product scope. Broad UI development is simply deferred until the first source pipeline and structured dataset are stable.
+
+### 4.3 Current Product Surface
+The current MVP product surface is intentionally narrow and organized around user intent rather than raw source categories.
+
+Implemented user-facing pages:
+- `Dashboard`
+- `Trade Explorer`
+- `Research`
+- `Signals`
+- `Alerts`
+
+Planned but still gated:
+- `X Feed`
+
+Admin-only capabilities remain separate from the main user navigation and are accessed through backend/admin flows rather than being embedded into the consumer product shell.
 
 ---
 
@@ -249,6 +265,24 @@ The first backend milestone is:
 - query it reliably
 
 Once this foundation is stable, the UI and higher-level intelligence workflows can be built on top without reworking the core pipeline.
+
+### 10.3 Product Interaction Model
+The current interaction model is:
+
+- `Dashboard`
+  - grouped overview of recent disclosures
+  - overview rows may collapse multiple related line items into one cleaner signal row
+- `Trade Explorer`
+  - raw disclosure stream with user-facing filters
+- `Research`
+  - drill-in page reached from dashboard/explorer interactions
+  - focal filing first, then related activity by the same filer or ticker
+- `Signals`
+  - deterministic ticker ranking from structured transaction data
+- `Alerts`
+  - reserved for future alert logic and fast-response workflows
+
+The product should expose source-derived intelligence without forcing users to think in terms of internal ingestion domains or backend source names.
 
 ---
 

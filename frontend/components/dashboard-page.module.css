@@ -24,6 +24,13 @@
   line-height: 1.12;
   letter-spacing: -0.03em;
 }
+
+.sectionNote {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
 .state {
   color: var(--muted);
   line-height: 1.6;
@@ -56,11 +63,37 @@
   display: flex;
   gap: 18px;
   align-items: flex-start;
+  justify-content: space-between;
   margin-bottom: 20px;
+}
+
+.sectionLink {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sectionLink:hover {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.sampleNote {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
 }
 
 @media (max-width: 1100px) {
   .summaryRow {
     grid-template-columns: 1fr;
+  }
+
+  .sectionHeader {
+    flex-direction: column;
   }
 }

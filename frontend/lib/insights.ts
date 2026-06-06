@@ -1,5 +1,20 @@
 import { TransactionFeedItem } from "@/lib/graphql";
 
+export type DashboardDisclosureGroup = {
+  key: string;
+  primarySourceRecordId: string;
+  reportingPerson: string;
+  districtOrState: string | null;
+  ticker: string | null;
+  issuerName: string;
+  assetType: string | null;
+  transactionType: string;
+  transactionDate: string | null;
+  amountRangeLabel: string;
+  lineItemCount: number;
+  transactions: TransactionFeedItem[];
+};
+
 export function buildSummary(transactions: TransactionFeedItem[]) {
   return {
     total: transactions.length,
@@ -55,6 +70,62 @@ export function formatDisplayDate(value: string | null) {
   }
 
   return value;
+}
+
+export function buildDashboardDisclosureGroups(
+  transactions: TransactionFeedItem[],
+): DashboardDisclosureGroup[] {
+  const groups = new Map<string, DashboardDisclosureGroup>();
+
+  for (const transaction of transactions) {
+    const key = [
+      transaction.reportingPerson,
+      transaction.ticker ?? transaction.issuerName,
+      transaction.transactionType,
+      transaction.transactionDate ?? "unknown-date",
+    ].join("::");
+
+    const existing = groups.get(key);
+    if (!existing) {
+      groups.set(key, {
+        key,
+        primarySourceRecordId: transaction.sourceRecordId,
+        reportingPerson: transaction.reportingPerson,
+        districtOrState: transaction.districtOrState,
+        ticker: transaction.ticker,
+        issuerName: transaction.issuerName,
+        assetType: transaction.assetType,
+        transactionType: transaction.transactionType,
+        transactionDate: transaction.transactionDate,
+        amountRangeLabel: transaction.amountRange ?? "Undisclosed range",
+        lineItemCount: 1,
+        transactions: [transaction],
+      });
+      continue;
+    }
+
+    existing.transactions.push(transaction);
+    existing.lineItemCount += 1;
+    existing.amountRangeLabel = buildAmountSummary(existing.transactions);
+  }
+
+  return Array.from(groups.values()).sort((left, right) => {
+    const leftDate = left.transactionDate ?? "";
+    const rightDate = right.transactionDate ?? "";
+    return rightDate.localeCompare(leftDate);
+  });
+}
+
+function buildAmountSummary(transactions: TransactionFeedItem[]) {
+  const uniqueRanges = Array.from(
+    new Set(transactions.map((transaction) => transaction.amountRange ?? "Undisclosed range")),
+  );
+
+  if (uniqueRanges.length === 1) {
+    return uniqueRanges[0];
+  }
+
+  return `${transactions.length} disclosed trades`;
 }
 
 function mapToSortedSignals(source: Map<string, number>) {

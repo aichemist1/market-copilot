@@ -239,3 +239,58 @@ def list_transaction_anomalies(
         }
         for transaction, filing in rows
     ]
+
+
+def get_dashboard_metrics(
+    session: Session,
+    *,
+    transaction_date_from: date | None = None,
+    transaction_date_to: date | None = None,
+) -> dict:
+    date_from = transaction_date_from or PRODUCT_TRANSACTION_START_DATE
+    today = _product_transaction_end_date()
+
+    base_filters = [
+        CongressionalFiling.publication_status == PUBLICATION_STATUS_PUBLISHED,
+        CongressionalFiling.domain_release_state == DOMAIN_RELEASE_PUBLISHED,
+        CongressionalTransaction.publication_status == PUBLICATION_STATUS_PUBLISHED,
+        CongressionalTransaction.transaction_date.is_not(None),
+        CongressionalTransaction.transaction_date >= date_from,
+        CongressionalTransaction.transaction_date <= today,
+    ]
+
+    if transaction_date_to:
+        base_filters.append(CongressionalTransaction.transaction_date <= transaction_date_to)
+
+    disclosure_count = session.execute(
+        select(func.count(CongressionalTransaction.id))
+        .join(CongressionalTransaction.filing)
+        .where(*base_filters)
+    ).scalar_one()
+
+    filer_count = session.execute(
+        select(func.count(func.distinct(CongressionalFiling.reporting_person)))
+        .join(CongressionalTransaction, CongressionalTransaction.filing_id == CongressionalFiling.id)
+        .where(*base_filters)
+    ).scalar_one()
+
+    buy_count = session.execute(
+        select(func.count(CongressionalTransaction.id))
+        .join(CongressionalTransaction.filing)
+        .where(*base_filters)
+        .where(CongressionalTransaction.transaction_type == "purchase")
+    ).scalar_one()
+
+    sell_count = session.execute(
+        select(func.count(CongressionalTransaction.id))
+        .join(CongressionalTransaction.filing)
+        .where(*base_filters)
+        .where(CongressionalTransaction.transaction_type == "sale")
+    ).scalar_one()
+
+    return {
+        "disclosure_count": int(disclosure_count or 0),
+        "buy_count": int(buy_count or 0),
+        "sell_count": int(sell_count or 0),
+        "filer_count": int(filer_count or 0),
+    }

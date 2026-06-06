@@ -1,0 +1,112 @@
+.summaryCard,
+.panel {
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: var(--shadow);
+}
+
+.panel {
+  padding: 24px;
+}
+
+.summaryRow {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 20px;
+  grid-template-columns: minmax(240px, 1.3fr) repeat(3, minmax(0, 1fr));
+}
+
+.summaryCard {
+  padding: 18px 20px;
+}
+
+.summaryLabel {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.summaryValue {
+  margin: 0;
+  font-size: 1.55rem;
+  line-height: 1.15;
+}
+
+.sectionHeader {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.sectionLabel {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 1.8rem;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+}
+
+.sectionNote {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.stack {
+  display: grid;
+  gap: 20px;
+}
+
+.subsection {
+  display: grid;
+  gap: 14px;
+}
+
+.subsectionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.subsectionLabel {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.subsectionTitle {
+  margin: 0;
+  font-size: 1.14rem;
+  line-height: 1.25;
+}
+
+.sourceLink {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.state {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+@media (max-width: 1100px) {
+  .summaryRow {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,14 +1,21 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { DisclosureList } from "@/components/disclosure-list";
+import { DashboardDisclosureList } from "@/components/dashboard-disclosure-list";
 import { ProductShell } from "@/components/product-shell";
-import { TransactionFeedItem, fetchTransactions } from "@/lib/graphql";
-import { buildSummary } from "@/lib/insights";
+import {
+  DashboardMetrics,
+  TransactionFeedItem,
+  fetchDashboardMetrics,
+  fetchTransactions,
+} from "@/lib/graphql";
+import { buildDashboardDisclosureGroups } from "@/lib/insights";
 import styles from "./dashboard-page.module.css";
 
 export function DashboardPage() {
   const [transactions, setTransactions] = useState<TransactionFeedItem[]>([]);
+  const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,13 +27,19 @@ export function DashboardPage() {
       setError(null);
 
       try {
-        const next = await fetchTransactions({
-          transactionDateFrom: "2026-01-01",
-          limit: 10,
-        });
+        const [nextTransactions, nextMetrics] = await Promise.all([
+          fetchTransactions({
+            transactionDateFrom: "2026-01-01",
+            limit: 10,
+          }),
+          fetchDashboardMetrics({
+            transactionDateFrom: "2026-01-01",
+          }),
+        ]);
 
         if (!cancelled) {
-          setTransactions(next);
+          setTransactions(nextTransactions);
+          setMetrics(nextMetrics);
         }
       } catch (nextError) {
         if (!cancelled) {
@@ -45,25 +58,33 @@ export function DashboardPage() {
     };
   }, []);
 
-  const summary = useMemo(() => buildSummary(transactions), [transactions]);
+  const groupedDisclosures = useMemo(
+    () => buildDashboardDisclosureGroups(transactions),
+    [transactions],
+  );
   return (
     <ProductShell
       title="A clearer view of current market disclosures."
       subtitle="Use the dashboard to stay oriented, then move into Trade Explorer or Signals when you want a sharper answer."
     >
       <section className={styles.summaryRow}>
-        <SummaryCard label="Recent disclosures" value={summary.total.toString()} />
-        <SummaryCard label="Buy actions" value={summary.purchases.toString()} />
-        <SummaryCard label="Sell actions" value={summary.sales.toString()} />
-        <SummaryCard label="Active members" value={summary.members.toString()} />
+        <SummaryCard label="Published disclosures" value={(metrics?.disclosureCount ?? 0).toString()} />
+        <SummaryCard label="Buy actions" value={(metrics?.buyCount ?? 0).toString()} />
+        <SummaryCard label="Sell actions" value={(metrics?.sellCount ?? 0).toString()} />
+        <SummaryCard label="Active members" value={(metrics?.filerCount ?? 0).toString()} />
       </section>
 
       <section className={styles.mainSection}>
         <div className={styles.sectionHeader}>
           <div>
             <p className={styles.sectionLabel}>Recent disclosures</p>
-            <h2 className={styles.sectionTitle}>A list-first view of the latest reportable activity.</h2>
+            <p className={styles.sectionNote}>
+              Recent disclosed trades grouped into cleaner signal rows before you drill into research.
+            </p>
           </div>
+          <Link className={styles.sectionLink} href="/trade-explorer">
+            View full disclosure stream
+          </Link>
         </div>
 
         {error ? <p className={styles.state}>{error}</p> : null}
@@ -72,8 +93,13 @@ export function DashboardPage() {
           <p className={styles.state}>No disclosures are available yet.</p>
         ) : null}
 
-        {!loading && !error && transactions.length > 0 ? (
-          <DisclosureList transactions={transactions} />
+        {!loading && !error && groupedDisclosures.length > 0 ? (
+          <>
+            <p className={styles.sampleNote}>
+              Showing {groupedDisclosures.length} grouped disclosures from the latest 10 in-scope trades.
+            </p>
+            <DashboardDisclosureList groups={groupedDisclosures} />
+          </>
         ) : null}
       </section>
     </ProductShell>

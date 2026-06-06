@@ -24,19 +24,16 @@ export function DisclosureList({
         >
           <div className={styles.memberColumn}>
             <p className={styles.member}>{transaction.reportingPerson}</p>
-            <p className={styles.meta}>
-              {transaction.districtOrState ?? "Unknown district"} · Filing {transaction.sourceRecordId}
-            </p>
+            <p className={styles.meta}>{transaction.districtOrState ?? "Unknown district"}</p>
             {transaction.ownerType ? (
               <span className={styles.ownerPill}>{formatOwnerType(transaction.ownerType)}</span>
             ) : null}
           </div>
 
           <div className={styles.assetColumn}>
+            <p className={styles.ticker}>{transaction.ticker ?? "No ticker"}</p>
             <h3 className={styles.issuer}>{transaction.issuerName}</h3>
-            <p className={styles.meta}>
-              {transaction.ticker ?? "No ticker"} · {formatAssetType(transaction.assetType)}
-            </p>
+            <p className={styles.assetMeta}>{formatAssetType(transaction.assetType)}</p>
           </div>
 
           <div className={styles.centerColumn}>

@@ -28,6 +28,36 @@ export type TickerSignal = {
   latestFilingDate: string | null;
 };
 
+export type DashboardMetrics = {
+  disclosureCount: number;
+  buyCount: number;
+  sellCount: number;
+  filerCount: number;
+};
+
+export type FilingTransaction = {
+  transactionIndex: number;
+  issuerName: string;
+  ticker: string | null;
+  assetType: string | null;
+  transactionType: string;
+  transactionDate: string | null;
+  notificationDate: string | null;
+  amountRange: string | null;
+  ownerType: string | null;
+  commentary: string | null;
+};
+
+export type CongressionalFilingRecord = {
+  sourceRecordId: string;
+  filingDate: string | null;
+  filingType: string;
+  reportingPerson: string;
+  districtOrState: string | null;
+  sourceDocumentUrl: string;
+  transactions: FilingTransaction[];
+};
+
 export type TransactionQueryParams = {
   ticker?: string;
   reportingPerson?: string;
@@ -106,6 +136,48 @@ const tickerSignalsQuery = `
   }
 `;
 
+const filingQuery = `
+  query FilingDetail($sourceRecordId: String!) {
+    congressionalFiling(sourceRecordId: $sourceRecordId) {
+      sourceRecordId
+      filingDate
+      filingType
+      reportingPerson
+      districtOrState
+      sourceDocumentUrl
+      transactions {
+        transactionIndex
+        issuerName
+        ticker
+        assetType
+        transactionType
+        transactionDate
+        notificationDate
+        amountRange
+        ownerType
+        commentary
+      }
+    }
+  }
+`;
+
+const dashboardMetricsQuery = `
+  query DashboardMetrics(
+    $transactionDateFrom: String
+    $transactionDateTo: String
+  ) {
+    dashboardMetrics(
+      transactionDateFrom: $transactionDateFrom
+      transactionDateTo: $transactionDateTo
+    ) {
+      disclosureCount
+      buyCount
+      sellCount
+      filerCount
+    }
+  }
+`;
+
 export async function fetchTransactions(
   params: TransactionQueryParams,
 ): Promise<TransactionFeedItem[]> {
@@ -168,4 +240,62 @@ export async function fetchTickerSignals(
   }
 
   return payload.data.tickerSignals ?? [];
+}
+
+export async function fetchFiling(
+  sourceRecordId: string,
+): Promise<CongressionalFilingRecord | null> {
+  const response = await fetch("/api/graphql", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-user-profile": "basic",
+    },
+    body: JSON.stringify({
+      query: filingQuery,
+      variables: {
+        sourceRecordId,
+      },
+    }),
+    cache: "no-store",
+  });
+
+  const payload = await response.json();
+
+  if (!response.ok || payload.errors?.length) {
+    const message = payload.errors?.[0]?.message ?? "GraphQL request failed";
+    throw new Error(message);
+  }
+
+  return payload.data.congressionalFiling ?? null;
+}
+
+export async function fetchDashboardMetrics(params: {
+  transactionDateFrom?: string;
+  transactionDateTo?: string;
+}): Promise<DashboardMetrics> {
+  const response = await fetch("/api/graphql", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-user-profile": "basic",
+    },
+    body: JSON.stringify({
+      query: dashboardMetricsQuery,
+      variables: {
+        transactionDateFrom: params.transactionDateFrom || null,
+        transactionDateTo: params.transactionDateTo || null,
+      },
+    }),
+    cache: "no-store",
+  });
+
+  const payload = await response.json();
+
+  if (!response.ok || payload.errors?.length) {
+    const message = payload.errors?.[0]?.message ?? "GraphQL request failed";
+    throw new Error(message);
+  }
+
+  return payload.data.dashboardMetrics;
 }

@@ -12,6 +12,13 @@ Initial scope:
 - SQLAlchemy models
 - Alembic migrations
 
+Current implemented backend surface:
+- congressional ingestion over `2026+` House PTR data
+- published product-facing GraphQL queries
+- admin-only operational GraphQL queries
+- deterministic ticker signal aggregation
+- anomaly review queue for future-dated transaction records
+
 Planned runtime split:
 - API service
 - ingestion/normalization service
@@ -96,3 +103,29 @@ Run the API locally:
 ```bash
 .venv/bin/uvicorn market_copilot.api.app:app --reload
 ```
+
+## Current GraphQL Surface
+
+Product-facing GraphQL queries:
+
+- `congressionalFilings`
+- `congressionalFiling`
+- `congressionalTransactions`
+- `tickerSignals`
+
+Admin-only GraphQL queries:
+
+- `adminIngestionRuns`
+- `adminValidationResults`
+- `adminTransactionAnomalies`
+
+Current product query behavior:
+
+- product-facing congressional queries are scoped to in-scope `2026+` trade activity
+- future-dated transaction anomalies are excluded from user-facing query results
+- those anomalies remain available through `adminTransactionAnomalies` for investigation instead of being silently discarded
+
+Current signal behavior:
+
+- `tickerSignals` is built from deterministic aggregation over structured transaction data
+- it is intended for “popular buy ticker” ranking rather than narrative generation

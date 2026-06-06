@@ -1,0 +1,20 @@
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.pycache/
+backend/.venv/
+
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+
+# Local env files
+frontend/.env.local
+backend/.env
+
+# Local artifacts
+.artifacts/
+.postgres-data/
+*.log
