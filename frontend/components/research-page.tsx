@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { DisclosureList } from "@/components/disclosure-list";
 import { ProductShell } from "@/components/product-shell";
 import { CongressionalFilingRecord, TransactionFeedItem, fetchFiling, fetchTransactions } from "@/lib/graphql";
-import { buildSummary, formatDisplayDate } from "@/lib/insights";
+import { buildSummary, formatAssetType, formatDisplayDate } from "@/lib/insights";
 import styles from "./research-page.module.css";
 
 type ResearchParams = {
@@ -70,6 +70,7 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
   }, [member, sourceRecordId, ticker]);
 
   const summary = useMemo(() => buildSummary(transactions), [transactions]);
+  const filingTickerList = useMemo(() => buildFilingTickerList(filing), [filing]);
   const sameMemberOtherTrades = useMemo(() => {
     return transactions.filter((transaction) => transaction.sourceRecordId !== sourceRecordId);
   }, [sourceRecordId, transactions]);
@@ -130,6 +131,15 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
             <p className={styles.sectionLabel}>Research focus</p>
             <h2 className={styles.sectionTitle}>{descriptor}</h2>
             <p className={styles.sectionNote}>{focalSummary}</p>
+            {filingTickerList.length > 0 ? (
+              <div className={styles.tickerChipRow}>
+                {filingTickerList.map((value) => (
+                  <span key={value} className={styles.tickerChip}>
+                    {value}
+                  </span>
+                ))}
+              </div>
+            ) : null}
           </div>
         </div>
 
@@ -158,7 +168,23 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
                   Source filing
                 </a>
               </div>
-              <DisclosureList transactions={mapFilingTransactions(filing)} />
+              <div className={styles.cardGrid}>
+                {filing.transactions.map((transaction) => (
+                  <ResearchTradeCard
+                    key={`${filing.sourceRecordId}-${transaction.transactionIndex}`}
+                    districtOrState={filing.districtOrState}
+                    filingDate={filing.filingDate}
+                    filingId={filing.sourceRecordId}
+                    issuerName={transaction.issuerName}
+                    member={filing.reportingPerson}
+                    ticker={transaction.ticker}
+                    amountRange={transaction.amountRange}
+                    assetType={transaction.assetType}
+                    tradeDate={transaction.transactionDate}
+                    transactionType={transaction.transactionType}
+                  />
+                ))}
+              </div>
             </section>
 
             {sameTickerByMember.length > 0 ? (
@@ -202,27 +228,6 @@ function SummaryCard({ label, value }: { label: string; value: string }) {
   );
 }
 
-function mapFilingTransactions(filing: CongressionalFilingRecord): TransactionFeedItem[] {
-  return filing.transactions.map((transaction) => ({
-    sourceRecordId: filing.sourceRecordId,
-    reportingPerson: filing.reportingPerson,
-    districtOrState: filing.districtOrState,
-    sourceDocumentUrl: filing.sourceDocumentUrl,
-    transactionIndex: transaction.transactionIndex,
-    issuerName: transaction.issuerName,
-    ticker: transaction.ticker,
-    assetType: transaction.assetType,
-    transactionType: transaction.transactionType,
-    transactionDate: transaction.transactionDate,
-    notificationDate: transaction.notificationDate,
-    amountRange: transaction.amountRange,
-    ownerType: transaction.ownerType,
-    subholding: null,
-    capitalGainsOver200: null,
-    commentary: transaction.commentary,
-  }));
-}
-
 function buildFocalSummary({
   filing,
   member,
@@ -236,17 +241,42 @@ function buildFocalSummary({
     return "Start with the filing-level context, then widen into the filer’s broader trading pattern.";
   }
 
+  const filingTickers = Array.from(
+    new Set(
+      filing.transactions
+        .map((transaction) => transaction.ticker)
+        .filter((value): value is string => Boolean(value)),
+    ),
+  );
   const otherTickerCount = new Set(
     filing.transactions
       .map((transaction) => transaction.ticker)
       .filter((value): value is string => Boolean(value) && value !== ticker),
   ).size;
 
-  if (ticker) {
-    return `${member} disclosed ${ticker} in filing ${filing.sourceRecordId}. This filing also includes ${otherTickerCount} other ticker${otherTickerCount === 1 ? "" : "s"}.`;
+  if (ticker && filingTickers.length > 1) {
+    return `${member} filed ${filing.transactions.length} trades in filing ${filing.sourceRecordId}, including ${filingTickers.join(" and ")}. You opened this filing from ${ticker}.`;
+  }
+
+  if (ticker && filingTickers.length === 1) {
+    return `${member} disclosed ${ticker} in filing ${filing.sourceRecordId}.`;
   }
 
   return `${member} disclosed ${filing.transactions.length} trade${filing.transactions.length === 1 ? "" : "s"} in filing ${filing.sourceRecordId}.`;
+}
+
+function buildFilingTickerList(filing: CongressionalFilingRecord | null) {
+  if (!filing) {
+    return [];
+  }
+
+  return Array.from(
+    new Set(
+      filing.transactions
+        .map((transaction) => transaction.ticker)
+        .filter((value): value is string => Boolean(value)),
+    ),
+  );
 }
 
 function buildTradeExplorerHref(
@@ -290,4 +320,121 @@ function buildMemberExplorerHref(paramsSource: ResearchParams, member: string) {
   if (transactionDateFromFilter) params.set("transactionDateFrom", transactionDateFromFilter);
   if (transactionDateToFilter) params.set("transactionDateTo", transactionDateToFilter);
   return `/trade-explorer?${params.toString()}`;
+}
+
+function ResearchTradeCard({
+  member,
+  districtOrState,
+  transactionType,
+  ticker,
+  issuerName,
+  amountRange,
+  assetType,
+  tradeDate,
+  filingId,
+  filingDate,
+}: {
+  member: string;
+  districtOrState: string | null;
+  transactionType: string;
+  ticker: string | null;
+  issuerName: string;
+  amountRange: string | null;
+  assetType: string | null;
+  tradeDate: string | null;
+  filingId: string;
+  filingDate: string | null;
+}) {
+  const initials = buildInitials(member);
+  const chamberLabel = buildChamberLabel(districtOrState);
+  const daysSinceTrade = buildDaysSinceTrade(tradeDate);
+
+  return (
+    <article className={styles.tradeCard}>
+      <div className={styles.tradeCardTop}>
+        <div className={styles.identityBlock}>
+          <div className={styles.avatar}>{initials}</div>
+          <div>
+            <h4 className={styles.memberName}>{member}</h4>
+            {chamberLabel ? <p className={styles.memberMeta}>{chamberLabel}</p> : null}
+          </div>
+        </div>
+        <span
+          className={transactionType === "purchase" ? styles.actionBadgeBuy : styles.actionBadgeSell}
+        >
+          {transactionType}
+        </span>
+      </div>
+
+      <div className={styles.tradeCardBody}>
+        <div className={styles.tickerLine}>
+          <span className={styles.tickerValue}>{ticker ?? "No ticker"}</span>
+          <span className={styles.issuerInline}>{issuerName}</span>
+        </div>
+        <span className={styles.assetPill}>{assetType === "stock" ? "Equity" : formatAssetType(assetType)}</span>
+
+        <div className={styles.metricGrid}>
+          <MetricBlock label="Amount range" value={amountRange ?? "Undisclosed"} accent />
+          <MetricBlock label="Trade date" value={formatDisplayDate(tradeDate)} />
+          <MetricBlock label="Asset type" value={assetType === "stock" ? "Equity" : formatAssetType(assetType)} />
+          <MetricBlock label="Days since trade" value={daysSinceTrade} />
+        </div>
+      </div>
+
+      <div className={styles.tradeCardFooter}>
+        <span>Filing</span>
+        <span>
+          {filingId} · {formatDisplayDate(filingDate)}
+        </span>
+      </div>
+    </article>
+  );
+}
+
+function MetricBlock({
+  label,
+  value,
+  accent = false,
+}: {
+  label: string;
+  value: string;
+  accent?: boolean;
+}) {
+  return (
+    <div className={styles.metricBlock}>
+      <p className={styles.metricLabel}>{label}</p>
+      <p className={accent ? styles.metricValueAccent : styles.metricValue}>{value}</p>
+    </div>
+  );
+}
+
+function buildInitials(name: string) {
+  return name
+    .replace("Hon. ", "")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join("");
+}
+
+function buildChamberLabel(districtOrState: string | null) {
+  if (!districtOrState) {
+    return null;
+  }
+
+  const normalized = districtOrState.replace(/([A-Z]{2})(\d{2})/, "$1-$2");
+  return `U.S. House · ${normalized}`;
+}
+
+function buildDaysSinceTrade(value: string | null) {
+  if (!value) {
+    return "Unknown";
+  }
+
+  const tradeDate = new Date(`${value}T00:00:00Z`);
+  const now = new Date();
+  const diffMs = now.getTime() - tradeDate.getTime();
+  const days = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+  return `${days} day${days === 1 ? "" : "s"}`;
 }

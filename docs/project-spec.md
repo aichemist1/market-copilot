@@ -9,6 +9,7 @@ The product goal is to help users make better stock and stock options buy/sell d
 The product will be delivered in phases. The first phase follows a backend-first approach so ingestion quality, normalization, schema design, validation, and structured querying are reliable before a broader user-facing experience is built on top. This delivery sequence is intentional, but the product scope is broader than the backend alone.
 
 Source-specific ingestion details live in [ingestion-design-congressional.md](/Users/dev/Documents/market-copilot/docs/ingestion-design-congressional.md).
+Congressional signal interpretation guidance lives in [congressional-signal-theses-mvp.md](/Users/dev/Documents/market-copilot/docs/congressional-signal-theses-mvp.md).
 
 ---
 
