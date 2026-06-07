@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { DisclosureList } from "@/components/disclosure-list";
 import { ProductShell } from "@/components/product-shell";
 import { CongressionalFilingRecord, TransactionFeedItem, fetchFiling, fetchTransactions } from "@/lib/graphql";
-import { buildSummary, formatAssetType, formatDisplayDate } from "@/lib/insights";
+import { buildSummary, formatDisplayDate } from "@/lib/insights";
 import styles from "./research-page.module.css";
 
 type ResearchParams = {
@@ -26,6 +26,7 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
   const sourceRecordId = params.sourceRecordId ?? "";
   const ticker = params.ticker ?? "";
   const member = params.member ?? "";
+  const [selectedTicker, setSelectedTicker] = useState(ticker);
   const [filing, setFiling] = useState<CongressionalFilingRecord | null>(null);
   const [transactions, setTransactions] = useState<TransactionFeedItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,27 +70,31 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
     };
   }, [member, sourceRecordId, ticker]);
 
+  useEffect(() => {
+    setSelectedTicker(ticker);
+  }, [ticker]);
+
   const summary = useMemo(() => buildSummary(transactions), [transactions]);
   const filingTickerList = useMemo(() => buildFilingTickerList(filing), [filing]);
   const sameMemberOtherTrades = useMemo(() => {
     return transactions.filter((transaction) => transaction.sourceRecordId !== sourceRecordId);
   }, [sourceRecordId, transactions]);
   const sameTickerByMember = useMemo(() => {
-    if (!ticker) {
+    if (!selectedTicker) {
       return [];
     }
 
     return transactions.filter(
       (transaction) =>
-        transaction.ticker === ticker && transaction.sourceRecordId !== sourceRecordId,
+        transaction.ticker === selectedTicker && transaction.sourceRecordId !== sourceRecordId,
     );
-  }, [sourceRecordId, ticker, transactions]);
+  }, [selectedTicker, sourceRecordId, transactions]);
   const focusLabel = member || "Research";
   const focalTradeCount = filing?.transactions.length ?? 0;
   const focalSummary = buildFocalSummary({
     filing,
     member,
-    ticker,
+    ticker: selectedTicker,
   });
   const tradeExplorerHref = buildTradeExplorerHref(params, { ticker, member });
 
@@ -134,9 +139,14 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
             {filingTickerList.length > 0 ? (
               <div className={styles.tickerChipRow}>
                 {filingTickerList.map((value) => (
-                  <span key={value} className={styles.tickerChip}>
+                  <button
+                    key={value}
+                    className={selectedTicker === value ? styles.tickerChipActive : styles.tickerChip}
+                    onClick={() => setSelectedTicker((current) => (current === value ? "" : value))}
+                    type="button"
+                  >
                     {value}
-                  </span>
+                  </button>
                 ))}
               </div>
             ) : null}
@@ -173,25 +183,24 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
                   <ResearchTradeCard
                     key={`${filing.sourceRecordId}-${transaction.transactionIndex}`}
                     filingDate={filing.filingDate}
-                    filingId={filing.sourceRecordId}
                     issuerName={transaction.issuerName}
                     ticker={transaction.ticker}
                     amountRange={transaction.amountRange}
-                    assetType={transaction.assetType}
                     tradeDate={transaction.transactionDate}
                     transactionType={transaction.transactionType}
+                    highlighted={Boolean(selectedTicker && transaction.ticker === selectedTicker)}
                   />
                 ))}
               </div>
             </section>
 
-            {sameTickerByMember.length > 0 ? (
+            {selectedTicker && sameTickerByMember.length > 0 ? (
               <section className={styles.subsection}>
                 <div className={styles.subsectionHeader}>
                   <div>
                     <p className={styles.subsectionLabel}>Ticker view</p>
                     <h3 className={styles.subsectionTitle}>
-                      Other {ticker} activity by {member}
+                      Other {selectedTicker} activity by {member}
                     </h3>
                   </div>
                 </div>
@@ -246,14 +255,8 @@ function buildFocalSummary({
         .filter((value): value is string => Boolean(value)),
     ),
   );
-  const otherTickerCount = new Set(
-    filing.transactions
-      .map((transaction) => transaction.ticker)
-      .filter((value): value is string => Boolean(value) && value !== ticker),
-  ).size;
-
   if (ticker && filingTickers.length > 1) {
-    return `${member} filed ${filing.transactions.length} trades in filing ${filing.sourceRecordId}. This filing includes ${filingTickers.join(", ")}.`;
+    return `${member} filed ${filing.transactions.length} trades in filing ${filing.sourceRecordId}. Select a ticker below to focus the matching cards.`;
   }
 
   if (ticker && filingTickers.length === 1) {
@@ -325,26 +328,28 @@ function ResearchTradeCard({
   ticker,
   issuerName,
   amountRange,
-  assetType,
   tradeDate,
-  filingId,
   filingDate,
+  highlighted,
 }: {
   transactionType: string;
   ticker: string | null;
   issuerName: string;
   amountRange: string | null;
-  assetType: string | null;
   tradeDate: string | null;
-  filingId: string;
   filingDate: string | null;
+  highlighted: boolean;
 }) {
   const daysSinceTrade = buildDaysSinceTrade(tradeDate);
+  const displayTicker = ticker ?? "No ticker";
 
   return (
-    <article className={styles.tradeCard}>
+    <article className={highlighted ? styles.tradeCardHighlighted : styles.tradeCard}>
       <div className={styles.tradeCardTop}>
-        <p className={styles.tradeCardKicker}>Focal trade</p>
+        <div className={styles.tickerLine}>
+          <span className={styles.tickerValue}>{displayTicker}</span>
+          <span className={styles.issuerInline}>{issuerName}</span>
+        </div>
         <span
           className={transactionType === "purchase" ? styles.actionBadgeBuy : styles.actionBadgeSell}
         >
@@ -353,25 +358,12 @@ function ResearchTradeCard({
       </div>
 
       <div className={styles.tradeCardBody}>
-        <div className={styles.tickerLine}>
-          <span className={styles.tickerValue}>{ticker ?? "No ticker"}</span>
-          <span className={styles.issuerInline}>{issuerName}</span>
-        </div>
-        <span className={styles.assetPill}>{assetType === "stock" ? "Equity" : formatAssetType(assetType)}</span>
-
         <div className={styles.metricGrid}>
           <MetricBlock label="Amount range" value={amountRange ?? "Undisclosed"} accent />
           <MetricBlock label="Trade date" value={formatDisplayDate(tradeDate)} />
-          <MetricBlock label="Asset type" value={assetType === "stock" ? "Equity" : formatAssetType(assetType)} />
+          <MetricBlock label="Filing date" value={formatDisplayDate(filingDate)} />
           <MetricBlock label="Days since trade" value={daysSinceTrade} />
         </div>
-      </div>
-
-      <div className={styles.tradeCardFooter}>
-        <span>Filing</span>
-        <span>
-          {filingId} · {formatDisplayDate(filingDate)}
-        </span>
       </div>
     </article>
   );
