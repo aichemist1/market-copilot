@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { DisclosureList } from "@/components/disclosure-list";
 import { ProductShell } from "@/components/product-shell";
@@ -9,12 +8,24 @@ import { CongressionalFilingRecord, TransactionFeedItem, fetchFiling, fetchTrans
 import { buildSummary, formatDisplayDate } from "@/lib/insights";
 import styles from "./research-page.module.css";
 
-export function ResearchPage() {
-  const searchParams = useSearchParams();
-  const from = searchParams.get("from") ?? "";
-  const sourceRecordId = searchParams.get("sourceRecordId") ?? "";
-  const ticker = searchParams.get("ticker") ?? "";
-  const member = searchParams.get("member") ?? "";
+type ResearchParams = {
+  from?: string;
+  sourceRecordId?: string;
+  ticker?: string;
+  member?: string;
+  tickerFilter?: string;
+  reportingPersonFilter?: string;
+  transactionTypeFilter?: string;
+  assetTypeFilter?: string;
+  transactionDateFromFilter?: string;
+  transactionDateToFilter?: string;
+};
+
+export function ResearchPage({ params }: { params: ResearchParams }) {
+  const from = params.from ?? "";
+  const sourceRecordId = params.sourceRecordId ?? "";
+  const ticker = params.ticker ?? "";
+  const member = params.member ?? "";
   const [filing, setFiling] = useState<CongressionalFilingRecord | null>(null);
   const [transactions, setTransactions] = useState<TransactionFeedItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,7 +90,7 @@ export function ResearchPage() {
     member,
     ticker,
   });
-  const tradeExplorerHref = buildTradeExplorerHref(searchParams, { ticker, member });
+  const tradeExplorerHref = buildTradeExplorerHref(params, { ticker, member });
 
   return (
     <ProductShell
@@ -94,12 +105,12 @@ export function ResearchPage() {
         ) : null}
         <div className={styles.inlineActions}>
           {ticker ? (
-            <Link className={styles.inlineLink} href={buildTickerExplorerHref(searchParams, ticker)}>
+            <Link className={styles.inlineLink} href={buildTickerExplorerHref(params, ticker)}>
               View {ticker} in Trade Explorer
             </Link>
           ) : null}
           {member ? (
-            <Link className={styles.inlineLink} href={buildMemberExplorerHref(searchParams, member)}>
+            <Link className={styles.inlineLink} href={buildMemberExplorerHref(params, member)}>
               View {member} in Trade Explorer
             </Link>
           ) : null}
@@ -239,43 +250,43 @@ function buildFocalSummary({
 }
 
 function buildTradeExplorerHref(
-  searchParams: URLSearchParams,
+  paramsSource: ResearchParams,
   fallback: { ticker: string; member: string },
 ) {
-  const params = new URLSearchParams();
-  const tickerFilter = searchParams.get("tickerFilter") ?? fallback.ticker;
-  const reportingPersonFilter = searchParams.get("reportingPersonFilter") ?? fallback.member;
-  const transactionTypeFilter = searchParams.get("transactionTypeFilter") ?? "";
-  const assetTypeFilter = searchParams.get("assetTypeFilter") ?? "";
-  const transactionDateFromFilter = searchParams.get("transactionDateFromFilter") ?? "2026-01-01";
-  const transactionDateToFilter = searchParams.get("transactionDateToFilter") ?? "";
+  const queryParams = new URLSearchParams();
+  const tickerFilter = paramsSource.tickerFilter ?? fallback.ticker;
+  const reportingPersonFilter = paramsSource.reportingPersonFilter ?? fallback.member;
+  const transactionTypeFilter = paramsSource.transactionTypeFilter ?? "";
+  const assetTypeFilter = paramsSource.assetTypeFilter ?? "";
+  const transactionDateFromFilter = paramsSource.transactionDateFromFilter ?? "2026-01-01";
+  const transactionDateToFilter = paramsSource.transactionDateToFilter ?? "";
 
-  if (tickerFilter) params.set("ticker", tickerFilter);
-  if (reportingPersonFilter) params.set("reportingPerson", reportingPersonFilter);
-  if (transactionTypeFilter) params.set("transactionType", transactionTypeFilter);
-  if (assetTypeFilter) params.set("assetType", assetTypeFilter);
-  if (transactionDateFromFilter) params.set("transactionDateFrom", transactionDateFromFilter);
-  if (transactionDateToFilter) params.set("transactionDateTo", transactionDateToFilter);
+  if (tickerFilter) queryParams.set("ticker", tickerFilter);
+  if (reportingPersonFilter) queryParams.set("reportingPerson", reportingPersonFilter);
+  if (transactionTypeFilter) queryParams.set("transactionType", transactionTypeFilter);
+  if (assetTypeFilter) queryParams.set("assetType", assetTypeFilter);
+  if (transactionDateFromFilter) queryParams.set("transactionDateFrom", transactionDateFromFilter);
+  if (transactionDateToFilter) queryParams.set("transactionDateTo", transactionDateToFilter);
 
-  const query = params.toString();
+  const query = queryParams.toString();
   return query ? `/trade-explorer?${query}` : "/trade-explorer";
 }
 
-function buildTickerExplorerHref(searchParams: URLSearchParams, ticker: string) {
+function buildTickerExplorerHref(paramsSource: ResearchParams, ticker: string) {
   const params = new URLSearchParams();
   params.set("ticker", ticker);
-  const transactionDateFromFilter = searchParams.get("transactionDateFromFilter") ?? "2026-01-01";
-  const transactionDateToFilter = searchParams.get("transactionDateToFilter") ?? "";
+  const transactionDateFromFilter = paramsSource.transactionDateFromFilter ?? "2026-01-01";
+  const transactionDateToFilter = paramsSource.transactionDateToFilter ?? "";
   if (transactionDateFromFilter) params.set("transactionDateFrom", transactionDateFromFilter);
   if (transactionDateToFilter) params.set("transactionDateTo", transactionDateToFilter);
   return `/trade-explorer?${params.toString()}`;
 }
 
-function buildMemberExplorerHref(searchParams: URLSearchParams, member: string) {
+function buildMemberExplorerHref(paramsSource: ResearchParams, member: string) {
   const params = new URLSearchParams();
   params.set("reportingPerson", member);
-  const transactionDateFromFilter = searchParams.get("transactionDateFromFilter") ?? "2026-01-01";
-  const transactionDateToFilter = searchParams.get("transactionDateToFilter") ?? "";
+  const transactionDateFromFilter = paramsSource.transactionDateFromFilter ?? "2026-01-01";
+  const transactionDateToFilter = paramsSource.transactionDateToFilter ?? "";
   if (transactionDateFromFilter) params.set("transactionDateFrom", transactionDateFromFilter);
   if (transactionDateToFilter) params.set("transactionDateTo", transactionDateToFilter);
   return `/trade-explorer?${params.toString()}`;

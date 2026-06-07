@@ -1,6 +1,5 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { DisclosureList } from "@/components/disclosure-list";
 import { ProductShell } from "@/components/product-shell";
@@ -25,6 +24,8 @@ const defaultFilters: Filters = {
   transactionDateTo: "",
 };
 
+type TradeExplorerInitialFilters = Partial<Filters>;
+
 const rangePresets = [
   { label: "Today", days: 0 },
   { label: "1 week", days: 7 },
@@ -33,16 +34,15 @@ const rangePresets = [
   { label: "All", days: null },
 ] as const;
 
-export function TradeExplorerPage() {
-  const searchParams = useSearchParams();
-  const [filters, setFilters] = useState<Filters>(() => filtersFromSearchParams(searchParams));
+export function TradeExplorerPage({
+  initialFilters,
+}: {
+  initialFilters?: TradeExplorerInitialFilters;
+}) {
+  const [filters, setFilters] = useState<Filters>(() => filtersFromObject(initialFilters));
   const [transactions, setTransactions] = useState<TransactionFeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    setFilters(filtersFromSearchParams(searchParams));
-  }, [searchParams]);
 
   useEffect(() => {
     let cancelled = false;
@@ -198,16 +198,14 @@ function buildResearchContext(filters: Filters) {
   };
 }
 
-function filtersFromSearchParams(searchParams: URLSearchParams): Filters {
+function filtersFromObject(source?: TradeExplorerInitialFilters): Filters {
   return {
-    ticker: searchParams.get("ticker") ?? defaultFilters.ticker,
-    reportingPerson: searchParams.get("reportingPerson") ?? defaultFilters.reportingPerson,
-    transactionType: searchParams.get("transactionType") ?? defaultFilters.transactionType,
-    assetType: searchParams.get("assetType") ?? defaultFilters.assetType,
-    transactionDateFrom:
-      searchParams.get("transactionDateFrom") ?? defaultFilters.transactionDateFrom,
-    transactionDateTo:
-      searchParams.get("transactionDateTo") ?? defaultFilters.transactionDateTo,
+    ticker: source?.ticker ?? defaultFilters.ticker,
+    reportingPerson: source?.reportingPerson ?? defaultFilters.reportingPerson,
+    transactionType: source?.transactionType ?? defaultFilters.transactionType,
+    assetType: source?.assetType ?? defaultFilters.assetType,
+    transactionDateFrom: source?.transactionDateFrom ?? defaultFilters.transactionDateFrom,
+    transactionDateTo: source?.transactionDateTo ?? defaultFilters.transactionDateTo,
   };
 }
 
