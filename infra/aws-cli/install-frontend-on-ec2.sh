@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+APP_USER="${APP_USER:-marketcopilot}"
 APP_ROOT="${APP_ROOT:-/srv/market-copilot}"
 APP_FRONTEND_ROOT="${APP_FRONTEND_ROOT:-${APP_ROOT}/frontend}"
 FRONTEND_ENV_FILE="${FRONTEND_ENV_FILE:-/etc/market-copilot/frontend.env}"
 FRONTEND_SERVICE_TEMPLATE="${FRONTEND_SERVICE_TEMPLATE:-/srv/market-copilot/infra/aws-cli/market-copilot-frontend.service}"
 NGINX_TEMPLATE="${NGINX_TEMPLATE:-/srv/market-copilot/infra/aws-cli/nginx-market-copilot.conf}"
 NPM_BIN="${NPM_BIN:-npm}"
+
+run_as_app_user() {
+  local cmd="$1"
+  su -s /bin/bash "${APP_USER}" -c "cd '${APP_FRONTEND_ROOT}' && export CI=1 && ${cmd}"
+}
 
 if [[ "$(id -u)" -ne 0 ]]; then
   echo "Run this script as root or with sudo."
@@ -28,22 +34,34 @@ if ! command -v "${NPM_BIN}" >/dev/null 2>&1; then
   exit 1
 fi
 
-cd "${APP_FRONTEND_ROOT}"
-
 set -a
 source "${FRONTEND_ENV_FILE}"
 set +a
 
+echo "== Frontend install =="
+echo "App user: ${APP_USER}"
+echo "Frontend root: ${APP_FRONTEND_ROOT}"
+
+chown -R "${APP_USER}:${APP_USER}" "${APP_FRONTEND_ROOT}"
+
+echo
+echo "== Installing frontend dependencies =="
 if [[ -f package-lock.json ]]; then
-  "${NPM_BIN}" ci
+  run_as_app_user "${NPM_BIN} ci --no-audit --no-fund"
 else
-  "${NPM_BIN}" install
+  run_as_app_user "${NPM_BIN} install --no-audit --no-fund"
 fi
-"${NPM_BIN}" run build
+
+echo
+echo "== Building frontend =="
+run_as_app_user "${NPM_BIN} run build"
 
 cp "${FRONTEND_SERVICE_TEMPLATE}" /etc/systemd/system/market-copilot-frontend.service
 systemctl daemon-reload
 systemctl enable market-copilot-frontend
+
+echo
+echo "== Starting frontend service =="
 systemctl restart market-copilot-frontend
 
 if [[ -d /etc/nginx/conf.d ]]; then
@@ -58,6 +76,9 @@ else
 fi
 
 nginx -t
+
+echo
+echo "== Restarting nginx =="
 systemctl restart nginx
 
 echo "Frontend install complete."

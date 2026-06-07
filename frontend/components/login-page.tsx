@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import styles from "./login-page.module.css";
 
 async function parseJsonResponse(response: Response) {
@@ -18,10 +18,9 @@ async function parseJsonResponse(response: Response) {
   }
 }
 
-export function LoginPage() {
+export function LoginPage({ nextPath }: { nextPath?: string }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const nextParam = searchParams.get("next") ?? "/";
+  const nextParam = nextPath ?? "/";
   const next = nextParam.startsWith("/") ? nextParam : "/";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
