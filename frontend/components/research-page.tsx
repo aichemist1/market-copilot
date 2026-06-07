@@ -84,7 +84,7 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
         transaction.ticker === ticker && transaction.sourceRecordId !== sourceRecordId,
     );
   }, [sourceRecordId, ticker, transactions]);
-  const descriptor = ticker ? `${member || "Member"} · ${ticker}` : member || "Research";
+  const focusLabel = member || "Research";
   const focalTradeCount = filing?.transactions.length ?? 0;
   const focalSummary = buildFocalSummary({
     filing,
@@ -119,7 +119,7 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
       </div>
 
       <section className={styles.summaryRow}>
-        <SummaryCard label="Focus" value={descriptor} />
+        <SummaryCard label="Focus" value={focusLabel} />
         <SummaryCard label="Filing trades" value={focalTradeCount.toString()} />
         <SummaryCard label="Other filer trades" value={sameMemberOtherTrades.length.toString()} />
         <SummaryCard label="Purchases" value={summary.purchases.toString()} />
@@ -129,7 +129,7 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
         <div className={styles.sectionHeader}>
           <div>
             <p className={styles.sectionLabel}>Research focus</p>
-            <h2 className={styles.sectionTitle}>{descriptor}</h2>
+            <h2 className={styles.sectionTitle}>{focusLabel}</h2>
             <p className={styles.sectionNote}>{focalSummary}</p>
             {filingTickerList.length > 0 ? (
               <div className={styles.tickerChipRow}>
@@ -172,11 +172,9 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
                 {filing.transactions.map((transaction) => (
                   <ResearchTradeCard
                     key={`${filing.sourceRecordId}-${transaction.transactionIndex}`}
-                    districtOrState={filing.districtOrState}
                     filingDate={filing.filingDate}
                     filingId={filing.sourceRecordId}
                     issuerName={transaction.issuerName}
-                    member={filing.reportingPerson}
                     ticker={transaction.ticker}
                     amountRange={transaction.amountRange}
                     assetType={transaction.assetType}
@@ -255,7 +253,7 @@ function buildFocalSummary({
   ).size;
 
   if (ticker && filingTickers.length > 1) {
-    return `${member} filed ${filing.transactions.length} trades in filing ${filing.sourceRecordId}, including ${filingTickers.join(" and ")}. You opened this filing from ${ticker}.`;
+    return `${member} filed ${filing.transactions.length} trades in filing ${filing.sourceRecordId}. This filing includes ${filingTickers.join(", ")}.`;
   }
 
   if (ticker && filingTickers.length === 1) {
@@ -323,8 +321,6 @@ function buildMemberExplorerHref(paramsSource: ResearchParams, member: string) {
 }
 
 function ResearchTradeCard({
-  member,
-  districtOrState,
   transactionType,
   ticker,
   issuerName,
@@ -334,8 +330,6 @@ function ResearchTradeCard({
   filingId,
   filingDate,
 }: {
-  member: string;
-  districtOrState: string | null;
   transactionType: string;
   ticker: string | null;
   issuerName: string;
@@ -345,20 +339,12 @@ function ResearchTradeCard({
   filingId: string;
   filingDate: string | null;
 }) {
-  const initials = buildInitials(member);
-  const chamberLabel = buildChamberLabel(districtOrState);
   const daysSinceTrade = buildDaysSinceTrade(tradeDate);
 
   return (
     <article className={styles.tradeCard}>
       <div className={styles.tradeCardTop}>
-        <div className={styles.identityBlock}>
-          <div className={styles.avatar}>{initials}</div>
-          <div>
-            <h4 className={styles.memberName}>{member}</h4>
-            {chamberLabel ? <p className={styles.memberMeta}>{chamberLabel}</p> : null}
-          </div>
-        </div>
+        <p className={styles.tradeCardKicker}>Focal trade</p>
         <span
           className={transactionType === "purchase" ? styles.actionBadgeBuy : styles.actionBadgeSell}
         >
@@ -406,25 +392,6 @@ function MetricBlock({
       <p className={accent ? styles.metricValueAccent : styles.metricValue}>{value}</p>
     </div>
   );
-}
-
-function buildInitials(name: string) {
-  return name
-    .replace("Hon. ", "")
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part.charAt(0).toUpperCase())
-    .join("");
-}
-
-function buildChamberLabel(districtOrState: string | null) {
-  if (!districtOrState) {
-    return null;
-  }
-
-  const normalized = districtOrState.replace(/([A-Z]{2})(\d{2})/, "$1-$2");
-  return `U.S. House · ${normalized}`;
 }
 
 function buildDaysSinceTrade(value: string | null) {
