@@ -124,6 +124,8 @@ Create an invite code for self-registration:
 .venv/bin/python -m market_copilot.scripts.create_invite_code --created-by-email admin@example.com
 ```
 
+The CLI generator remains a fallback path. The primary production-style admin workflow is the authenticated frontend route at `/admin/invites`.
+
 Current auth runtime behavior:
 
 - backend login endpoint: `POST /auth/login`

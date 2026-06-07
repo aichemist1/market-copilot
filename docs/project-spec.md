@@ -150,6 +150,7 @@ The first invited-user operating plan is tracked in [invited-user-rollout-plan-m
 - invite-only registration
 - user must provide a valid invite code during sign-up
 - the product should support self-registration through invite codes rather than requiring manual user creation for normal onboarding
+- admin users should be able to generate and review invite codes from an authenticated admin surface rather than relying on shell access for normal onboarding
 
 ---
 

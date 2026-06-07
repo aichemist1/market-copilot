@@ -23,6 +23,7 @@ Reserved for later gated release:
 
 Admin-only and intentionally out of the main user nav:
 
+- `Invite Codes` at `/admin/invites`
 - `Review Queue` at `/admin/review`
 
 These tabs are product concepts, not source-system names. The UI should stay organized around user intent rather than exposing internal ingestion categories such as congressional, institutional, whale, or other source labels as primary navigation.
@@ -165,9 +166,11 @@ The current admin review workflow is intentionally narrow and operational:
 - future-dated or otherwise suspicious transaction anomalies remain out of user-facing product views
 - those rows remain visible to admins through the `Review Queue`
 - failed validation outputs remain inspectable in the same admin review surface
+- invited-user onboarding is managed through the admin `Invite Codes` page rather than CLI-only operations
 
 Current admin review route:
 
+- `/admin/invites`
 - `/admin/review`
 
 ## 10. First Release Matrix
@@ -181,6 +184,7 @@ User-visible in the first release candidate:
 
 Admin-only:
 
+- `Invite Codes`
 - `Review Queue`
 - backend admin anomaly and validation queries
 - ingestion and operational tooling
@@ -196,6 +200,7 @@ Current first-release access behavior:
 
 - the visible product surface requires sign-in
 - `Dashboard`, `Trade Explorer`, `Research`, and `Signals` are authenticated user pages
+- `Invite Codes` and `Review Queue` remain admin-only operational surfaces
 - `Review Queue` remains admin-only and must not be reachable by basic users through direct URL entry
 - `Alerts` remains implemented but gated out of the first user release
 

@@ -72,6 +72,7 @@ The intended onboarding model is:
 4. user lands in the authenticated product surface
 
 Manual user creation is no longer the preferred onboarding path for normal invited users.
+The primary admin path for invite creation is now the in-app `Invite Codes` page at `/admin/invites`, with the CLI script retained only as a recovery fallback.
 
 ## 4. What Users See
 
@@ -88,6 +89,7 @@ Visible to invited `basic` users:
 
 Visible to `admin` users only:
 
+- `Invite Codes`
 - `Review Queue`
 - anomaly inspection
 - validation inspection

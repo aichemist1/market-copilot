@@ -79,9 +79,14 @@ export function ProductShell({
             </div>
             <div className={styles.headerActions}>
               {isAdmin ? (
-                <Link className={styles.adminLink} href="/admin/review">
-                  Review Queue
-                </Link>
+                <>
+                  <Link className={styles.adminLink} href="/admin/invites">
+                    Invite Codes
+                  </Link>
+                  <Link className={styles.adminLink} href="/admin/review">
+                    Review Queue
+                  </Link>
+                </>
               ) : null}
               <button className={styles.accountButton} onClick={handleSignOut} type="button">
                 Sign out

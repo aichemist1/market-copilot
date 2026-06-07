@@ -67,6 +67,16 @@ export type AdminTransactionAnomaly = {
   anomalyMessage: string;
 };
 
+export type AdminInviteCode = {
+  code: string;
+  status: string;
+  expires_at: string | null;
+  used_at: string | null;
+  created_at: string;
+  created_by_email: string | null;
+  used_by_email: string | null;
+};
+
 export type FilingTransaction = {
   transactionIndex: number;
   issuerName: string;
@@ -373,4 +383,46 @@ export async function fetchAdminTransactionAnomalies(params: {
   });
 
   return data.adminTransactionAnomalies ?? [];
+}
+
+export async function fetchAdminInviteCodes(): Promise<AdminInviteCode[]> {
+  const response = await fetch("/api/admin/invite-codes", {
+    cache: "no-store",
+  });
+  const payload = (await response.json()) as {
+    error?: string;
+    inviteCodes?: AdminInviteCode[];
+  };
+
+  if (!response.ok) {
+    throw new Error(payload.error ?? "Unable to load invite codes");
+  }
+
+  return payload.inviteCodes ?? [];
+}
+
+export async function createAdminInviteCode(params: {
+  expiresDays?: number;
+  code?: string;
+}): Promise<AdminInviteCode> {
+  const response = await fetch("/api/admin/invite-codes", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      expiresDays: params.expiresDays ?? 14,
+      code: params.code ?? "",
+    }),
+  });
+  const payload = (await response.json()) as {
+    error?: string;
+    inviteCode?: AdminInviteCode;
+  };
+
+  if (!response.ok || !payload.inviteCode) {
+    throw new Error(payload.error ?? "Unable to create invite code");
+  }
+
+  return payload.inviteCode;
 }
