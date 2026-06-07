@@ -16,6 +16,17 @@ function getSessionSecret() {
   return process.env.MARKET_COPILOT_SESSION_SECRET ?? "market-copilot-dev-session-secret";
 }
 
+export function shouldUseSecureSessionCookie() {
+  const explicit = process.env.MARKET_COPILOT_SESSION_COOKIE_SECURE;
+  if (explicit === "true") {
+    return true;
+  }
+  if (explicit === "false") {
+    return false;
+  }
+  return process.env.NODE_ENV === "production";
+}
+
 function encodeBase64Url(input: Uint8Array) {
   let binary = "";
   input.forEach((value) => {

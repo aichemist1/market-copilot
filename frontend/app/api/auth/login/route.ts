@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { SESSION_COOKIE_NAME, encodeSession, isAppUserProfile } from "@/lib/auth-session";
+import {
+  SESSION_COOKIE_NAME,
+  encodeSession,
+  isAppUserProfile,
+  shouldUseSecureSessionCookie,
+} from "@/lib/auth-session";
 
 const graphqlEndpoint =
   process.env.MARKET_COPILOT_GRAPHQL_ENDPOINT ?? "http://127.0.0.1:8000/graphql";
@@ -81,7 +86,7 @@ export async function POST(request: NextRequest) {
     httpOnly: true,
     path: "/",
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureSessionCookie(),
   });
   return response;
 }
