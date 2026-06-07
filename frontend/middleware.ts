@@ -22,13 +22,38 @@ function isProtectedPath(pathname: string) {
   return true;
 }
 
+function buildExternalUrl(request: NextRequest, pathname: string) {
+  const forwardedProto = request.headers.get("x-forwarded-proto");
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const forwardedPort = request.headers.get("x-forwarded-port");
+  const url = request.nextUrl.clone();
+
+  if (forwardedProto) {
+    url.protocol = `${forwardedProto}:`;
+  }
+
+  if (forwardedHost) {
+    url.host = forwardedHost;
+  } else if (request.headers.get("host")) {
+    url.host = request.headers.get("host") as string;
+  }
+
+  if (forwardedPort && forwardedHost && !forwardedHost.includes(":")) {
+    url.host = `${forwardedHost}:${forwardedPort}`;
+  }
+
+  url.pathname = pathname;
+  url.search = "";
+  return url;
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (AUTH_FREE_PATHS.some((path) => pathname === path)) {
     const session = await decodeSession(request.cookies.get(SESSION_COOKIE_NAME)?.value);
     if ((pathname === "/login" || pathname === "/register") && session) {
-      return NextResponse.redirect(new URL("/", request.url));
+      return NextResponse.redirect(buildExternalUrl(request, "/"));
     }
     return NextResponse.next();
   }
@@ -39,13 +64,13 @@ export async function middleware(request: NextRequest) {
 
   const session = await decodeSession(request.cookies.get(SESSION_COOKIE_NAME)?.value);
   if (!session) {
-    const loginUrl = new URL("/login", request.url);
+    const loginUrl = buildExternalUrl(request, "/login");
     loginUrl.searchParams.set("next", pathname + request.nextUrl.search);
     return NextResponse.redirect(loginUrl);
   }
 
   if (ADMIN_ONLY_PREFIXES.some((prefix) => pathname.startsWith(prefix)) && session.profile !== "admin") {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(buildExternalUrl(request, "/"));
   }
 
   return NextResponse.next();
