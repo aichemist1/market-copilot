@@ -1,5 +1,5 @@
 :root {
-  --bg: #f2efe9;
+  --bg: #f4f2ec;
   --panel: rgba(255, 255, 255, 0.82);
   --panel-strong: rgba(255, 255, 255, 0.92);
   --line: rgba(35, 29, 23, 0.09);
@@ -9,7 +9,7 @@
   --accent-soft: rgba(13, 111, 104, 0.12);
   --warn: #925144;
   --warn-soft: rgba(146, 81, 68, 0.12);
-  --shadow: 0 30px 70px rgba(49, 36, 24, 0.08);
+  --shadow: 0 24px 56px rgba(49, 36, 24, 0.06);
   --shadow-soft: 0 12px 28px rgba(49, 36, 24, 0.05);
 }
 
@@ -25,7 +25,9 @@ body {
   margin: 0;
   min-height: 100vh;
   color: var(--text);
-  background: linear-gradient(180deg, #faf9f6 0%, var(--bg) 100%);
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 34%),
+    linear-gradient(180deg, #f9f8f4 0%, var(--bg) 100%);
   font-family:
     Inter,
     ui-sans-serif,

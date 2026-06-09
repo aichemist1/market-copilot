@@ -43,8 +43,11 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
         const [nextFiling, nextTransactions] = await Promise.all([
           sourceRecordId ? fetchFiling(sourceRecordId) : Promise.resolve(null),
           fetchTransactions({
+            ticker: selectedTicker || ticker || undefined,
             reportingPerson: member || undefined,
-            transactionDateFrom: "2026-01-01",
+            assetType: params.assetTypeFilter || undefined,
+            transactionDateFrom: params.transactionDateFromFilter || "2026-01-01",
+            transactionDateTo: params.transactionDateToFilter || undefined,
             limit: 50,
           }),
         ]);
@@ -68,7 +71,15 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
     return () => {
       cancelled = true;
     };
-  }, [member, sourceRecordId, ticker]);
+  }, [
+    member,
+    params.assetTypeFilter,
+    params.transactionDateFromFilter,
+    params.transactionDateToFilter,
+    selectedTicker,
+    sourceRecordId,
+    ticker,
+  ]);
 
   useEffect(() => {
     setSelectedTicker(ticker);
@@ -77,10 +88,13 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
   const summary = useMemo(() => buildSummary(transactions), [transactions]);
   const filingTickerList = useMemo(() => buildFilingTickerList(filing), [filing]);
   const sameMemberOtherTrades = useMemo(() => {
+    if (!member) {
+      return [];
+    }
     return transactions.filter((transaction) => transaction.sourceRecordId !== sourceRecordId);
-  }, [sourceRecordId, transactions]);
+  }, [member, sourceRecordId, transactions]);
   const sameTickerByMember = useMemo(() => {
-    if (!selectedTicker) {
+    if (!selectedTicker || !member) {
       return [];
     }
 
@@ -89,19 +103,32 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
         transaction.ticker === selectedTicker && transaction.sourceRecordId !== sourceRecordId,
     );
   }, [selectedTicker, sourceRecordId, transactions]);
-  const focusLabel = member || "Research";
-  const focalTradeCount = filing?.transactions.length ?? 0;
+  const filerCount = useMemo(
+    () => new Set(transactions.map((transaction) => transaction.reportingPerson)).size,
+    [transactions],
+  );
+  const focusLabel = member || selectedTicker || "Research";
+  const focalTradeCount = filing?.transactions.length ?? (selectedTicker ? transactions.length : 0);
   const focalSummary = buildFocalSummary({
     filing,
     member,
     ticker: selectedTicker,
+    filerCount,
+    transactionCount: transactions.length,
   });
   const tradeExplorerHref = buildTradeExplorerHref(params, { ticker, member });
+  const showFocalFiling = Boolean(filing);
+  const showTickerResearch = !filing && Boolean(selectedTicker) && transactions.length > 0;
+  const pageSubtitle = showFocalFiling
+    ? "Start with the focal filing, then widen into related activity from the same filer or ticker."
+    : selectedTicker
+      ? "Use recent disclosures around one ticker to understand who is trading it, how often, and with what direction."
+      : "Start with a filing, filer, or ticker, then widen into related disclosure activity.";
 
   return (
     <ProductShell
       title="Research"
-      subtitle="Start with the focal filing, then widen into related activity from the same filer or ticker."
+      subtitle={pageSubtitle}
     >
       <div className={styles.topActions}>
         {from === "trade-explorer" ? (
@@ -124,9 +151,9 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
       </div>
 
       <section className={styles.summaryRow}>
-        <SummaryCard label="Focus" value={focusLabel} />
-        <SummaryCard label="Filing trades" value={focalTradeCount.toString()} />
-        <SummaryCard label="Other filer trades" value={sameMemberOtherTrades.length.toString()} />
+        <SummaryCard label={selectedTicker && !member ? "Ticker" : "Focus"} value={focusLabel} />
+        <SummaryCard label={showFocalFiling ? "Filing trades" : "Visible trades"} value={focalTradeCount.toString()} />
+        <SummaryCard label={member ? "Other filer trades" : "Filers"} value={(member ? sameMemberOtherTrades.length : filerCount).toString()} />
         <SummaryCard label="Purchases" value={summary.purchases.toString()} />
       </section>
 
@@ -159,19 +186,20 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
           <p className={styles.state}>No matching trades were found for this research view. Return to Trade Explorer and broaden the search.</p>
         ) : null}
 
-        {!loading && !error && filing ? (
+        {!loading && !error && (showFocalFiling || showTickerResearch) ? (
           <div className={styles.stack}>
+            {showFocalFiling ? (
             <section className={styles.subsection}>
               <div className={styles.subsectionHeader}>
                 <div>
                   <p className={styles.subsectionLabel}>Focal filing</p>
                   <h3 className={styles.subsectionTitle}>
-                    Filing {filing.sourceRecordId} · {formatDisplayDate(filing.filingDate)}
+                    Filing {filing!.sourceRecordId} · {formatDisplayDate(filing!.filingDate)}
                   </h3>
                 </div>
                 <a
                   className={styles.sourceLink}
-                  href={filing.sourceDocumentUrl}
+                  href={filing!.sourceDocumentUrl}
                   rel="noreferrer"
                   target="_blank"
                 >
@@ -179,10 +207,10 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
                 </a>
               </div>
               <div className={styles.cardGrid}>
-                {filing.transactions.map((transaction) => (
+                {filing!.transactions.map((transaction) => (
                   <ResearchTradeCard
-                    key={`${filing.sourceRecordId}-${transaction.transactionIndex}`}
-                    filingDate={filing.filingDate}
+                    key={`${filing!.sourceRecordId}-${transaction.transactionIndex}`}
+                    filingDate={filing!.filingDate}
                     issuerName={transaction.issuerName}
                     ticker={transaction.ticker}
                     amountRange={transaction.amountRange}
@@ -193,6 +221,21 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
                 ))}
               </div>
             </section>
+            ) : null}
+
+            {showTickerResearch ? (
+              <section className={styles.subsection}>
+                <div className={styles.subsectionHeader}>
+                  <div>
+                    <p className={styles.subsectionLabel}>Ticker research</p>
+                    <h3 className={styles.subsectionTitle}>
+                      Recent {selectedTicker} disclosures across filers
+                    </h3>
+                  </div>
+                </div>
+                <DisclosureList transactions={transactions} />
+              </section>
+            ) : null}
 
             {selectedTicker && sameTickerByMember.length > 0 ? (
               <section className={styles.subsection}>
@@ -239,12 +282,19 @@ function buildFocalSummary({
   filing,
   member,
   ticker,
+  filerCount,
+  transactionCount,
 }: {
   filing: CongressionalFilingRecord | null;
   member: string;
   ticker: string;
+  filerCount: number;
+  transactionCount: number;
 }) {
   if (!filing) {
+    if (ticker) {
+      return `${transactionCount} recent ${ticker} disclosure${transactionCount === 1 ? "" : "s"} across ${filerCount} filer${filerCount === 1 ? "" : "s"}.`;
+    }
     return "Start with the filing-level context, then widen into the filer’s broader trading pattern.";
   }
 

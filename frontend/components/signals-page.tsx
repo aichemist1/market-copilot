@@ -136,7 +136,10 @@ export function SignalsPage() {
                 <span>{signal.filerCount}</span>
                 <span>{signal.latestFilingDate ?? "Unknown"}</span>
                 <div className={styles.actions}>
-                  <Link className={styles.actionLink} href={`/research?ticker=${encodeURIComponent(signal.ticker)}`}>
+                  <Link
+                    className={styles.actionLink}
+                    href={`/research?from=signals&ticker=${encodeURIComponent(signal.ticker)}&assetTypeFilter=${encodeURIComponent(assetType)}&transactionDateFromFilter=${encodeURIComponent(transactionDateFrom)}`}
+                  >
                     Research
                   </Link>
                   <Link
