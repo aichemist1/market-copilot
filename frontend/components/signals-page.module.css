@@ -1,9 +1,59 @@
-.panel {
+.metricsStrip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.metricCard,
+.panel,
+.signalCard,
+.signalCardHot {
   border: 1px solid var(--line);
-  border-radius: 30px;
-  background: rgba(255, 255, 255, 0.84);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.88);
   box-shadow: var(--shadow);
+}
+
+.metricCard {
+  padding: 18px 20px;
+}
+
+.metricLabel {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.metricValue {
+  margin: 0;
+  font-size: 1.9rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.metricHint,
+.metricHintAccent {
+  margin: 10px 0 0;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.metricHintAccent {
+  color: var(--accent);
+}
+
+.panel {
   padding: 24px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
 }
 
 .sectionLabel {
@@ -16,29 +66,17 @@
 
 .sectionTitle {
   margin: 0;
-  font-size: 1.7rem;
-  line-height: 1.12;
-  letter-spacing: -0.03em;
+  font-size: 1.56rem;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
 }
 
 .sectionNote {
-  margin: 8px 0 0;
+  margin: 10px 0 0;
   color: var(--muted);
   font-size: 0.92rem;
-  line-height: 1.5;
-}
-
-.state {
-  color: var(--muted);
-  line-height: 1.65;
-}
-
-.sectionHeader {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 18px;
-  margin-bottom: 20px;
+  line-height: 1.55;
+  max-width: 760px;
 }
 
 .controls {
@@ -57,8 +95,8 @@
 .chipActive {
   border: 1px solid var(--line);
   border-radius: 999px;
-  padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.76);
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.84);
   color: var(--muted);
   cursor: pointer;
 }
@@ -66,81 +104,214 @@
 .chipActive {
   background: rgba(15, 118, 110, 0.12);
   color: var(--accent);
-  border-color: rgba(15, 118, 110, 0.22);
+  border-color: rgba(15, 118, 110, 0.2);
 }
 
-.table {
-  display: grid;
-  gap: 10px;
-}
-
-.tableHeader,
-.tableRow {
-  display: grid;
-  grid-template-columns: 70px 140px minmax(260px, 1.2fr) 120px 120px 100px 150px 150px;
-  gap: 16px;
-  align-items: center;
-}
-
-.tableHeader {
-  padding: 0 4px 8px;
+.state {
   color: var(--muted);
-  font-size: 0.8rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  line-height: 1.65;
 }
 
-.tableRow {
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 16px;
-  background: rgba(249, 247, 242, 0.96);
-}
-
-.rank,
-.ticker {
-  margin: 0;
-}
-
-.tickerCell {
+.cardGrid {
   display: grid;
-  gap: 4px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.signalCard,
+.signalCardHot {
+  overflow: hidden;
+}
+
+.signalCardHot {
+  border-color: rgba(15, 118, 110, 0.45);
+  box-shadow: 0 26px 56px rgba(15, 118, 110, 0.12);
+}
+
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 22px 18px;
+}
+
+.identityRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
   min-width: 0;
 }
 
-.ticker {
-  font-size: 1rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+.rankBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
-.issuer,
-.signalText {
+.rankHot {
+  background: rgba(194, 147, 47, 0.18);
+  color: #8a6417;
+}
+
+.rankSilver {
+  background: rgba(170, 173, 181, 0.18);
+  color: #5b6474;
+}
+
+.rankBronze {
+  background: rgba(175, 99, 58, 0.14);
+  color: #95502a;
+}
+
+.rankNeutral {
+  background: rgba(35, 29, 23, 0.06);
   color: var(--muted);
+}
+
+.identityText {
+  min-width: 0;
+}
+
+.tickerValue {
+  margin: 0;
+  font-size: 1.46rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.issuerName {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+  line-height: 1.35;
+}
+
+.hotBadge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: rgba(15, 118, 110, 0.1);
+  color: #0c5f58;
   font-size: 0.88rem;
-  line-height: 1.4;
+  font-weight: 700;
 }
 
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+.cardBody {
+  padding: 18px 22px 20px;
+  border-top: 1px solid var(--line);
 }
 
-.actionLink {
-  color: var(--accent);
-  text-decoration: none;
+.barRow {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) 22px;
+  align-items: center;
+  gap: 14px;
+}
+
+.barRow + .barRow {
+  margin-top: 14px;
+}
+
+.buyLabel,
+.sellLabel {
   font-size: 0.9rem;
-  font-weight: 600;
 }
 
-.actionLink:hover {
-  color: var(--text);
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
+.buyLabel {
+  color: #0d6f68;
+}
+
+.sellLabel {
+  color: #a84b27;
+}
+
+.barTrack {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(35, 29, 23, 0.05);
+  overflow: hidden;
+}
+
+.buyBar,
+.sellBar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+}
+
+.buyBar {
+  background: linear-gradient(90deg, #2cb582 0%, #239d79 100%);
+}
+
+.sellBar {
+  background: linear-gradient(90deg, #d66a3d 0%, #c6552a 100%);
+}
+
+.barValue {
+  font-size: 0.96rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.metaLabel {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.metaValue {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.cardActions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 16px 22px 20px;
+  background: rgba(248, 245, 238, 0.74);
+  border-top: 1px solid var(--line);
+}
+
+.actionButton {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 46px;
+  border: 1px solid rgba(42, 105, 189, 0.22);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #2a69bd;
+  font-weight: 700;
+}
+
+.actionButton:hover {
+  border-color: rgba(42, 105, 189, 0.36);
+  color: #174b95;
 }
 
 @media (max-width: 1180px) {
+  .metricsStrip,
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+
   .sectionHeader {
     flex-direction: column;
   }
@@ -148,12 +319,34 @@
   .chips {
     justify-content: flex-start;
   }
+}
 
-  .tableHeader {
-    display: none;
+@media (max-width: 720px) {
+  .metricCard,
+  .panel {
+    padding-left: 18px;
+    padding-right: 18px;
   }
 
-  .tableRow {
-    grid-template-columns: 1fr;
+  .cardTop,
+  .cardBody,
+  .cardActions {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .cardTop {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .rankBadge {
+    width: 46px;
+    height: 46px;
+    font-size: 1.05rem;
+  }
+
+  .tickerValue {
+    font-size: 1.28rem;
   }
 }

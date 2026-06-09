@@ -119,6 +119,8 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
   const tradeExplorerHref = buildTradeExplorerHref(params, { ticker, member });
   const showFocalFiling = Boolean(filing);
   const showTickerResearch = !filing && Boolean(selectedTicker) && transactions.length > 0;
+  const summaryModeLabel = showFocalFiling ? "Focus" : selectedTicker ? "Ticker" : "Focus";
+  const headerLabel = showFocalFiling ? "Filing brief" : selectedTicker ? "Ticker brief" : "Research";
   const pageSubtitle = showFocalFiling
     ? "Start with the focal filing, then widen into related activity from the same filer or ticker."
     : selectedTicker
@@ -151,7 +153,7 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
       </div>
 
       <section className={styles.summaryRow}>
-        <SummaryCard label={selectedTicker && !member ? "Ticker" : "Focus"} value={focusLabel} />
+        <SummaryCard label={summaryModeLabel} value={focusLabel} />
         <SummaryCard label={showFocalFiling ? "Filing trades" : "Visible trades"} value={focalTradeCount.toString()} />
         <SummaryCard label={member ? "Other filer trades" : "Filers"} value={(member ? sameMemberOtherTrades.length : filerCount).toString()} />
         <SummaryCard label="Purchases" value={summary.purchases.toString()} />
@@ -160,7 +162,7 @@ export function ResearchPage({ params }: { params: ResearchParams }) {
       <section className={styles.panel}>
         <div className={styles.sectionHeader}>
           <div>
-            <p className={styles.sectionLabel}>Research focus</p>
+            <p className={styles.sectionLabel}>{headerLabel}</p>
             <h2 className={styles.sectionTitle}>{focusLabel}</h2>
             <p className={styles.sectionNote}>{focalSummary}</p>
             {filingTickerList.length > 0 ? (

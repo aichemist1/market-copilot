@@ -89,6 +89,14 @@ class DashboardMetricsType:
 
 
 @strawberry.type
+class SignalMetricsType:
+    active_ticker_count: int
+    buy_disclosure_count: int
+    distinct_filer_count: int
+    latest_filing_date: date | None
+
+
+@strawberry.type
 class CongressionalFilingType:
     id: strawberry.ID
     source_type: str

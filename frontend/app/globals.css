@@ -1,5 +1,5 @@
 :root {
-  --bg: #f4f2ec;
+  --bg: #efece4;
   --panel: rgba(255, 255, 255, 0.82);
   --panel-strong: rgba(255, 255, 255, 0.92);
   --line: rgba(35, 29, 23, 0.09);
@@ -26,8 +26,9 @@ body {
   min-height: 100vh;
   color: var(--text);
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 34%),
-    linear-gradient(180deg, #f9f8f4 0%, var(--bg) 100%);
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 32%),
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 28%),
+    linear-gradient(180deg, #f7f5ef 0%, var(--bg) 100%);
   font-family:
     Inter,
     ui-sans-serif,

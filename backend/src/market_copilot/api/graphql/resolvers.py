@@ -296,3 +296,61 @@ def get_dashboard_metrics(
         "sell_count": int(sell_count or 0),
         "filer_count": int(filer_count or 0),
     }
+
+
+def get_signal_metrics(
+    session: Session,
+    *,
+    asset_type: str | None = None,
+    transaction_date_from: date | None = None,
+    transaction_date_to: date | None = None,
+) -> dict:
+    date_from = transaction_date_from or PRODUCT_TRANSACTION_START_DATE
+    resolved_asset_type = asset_type or "stock"
+    today = _product_transaction_end_date()
+
+    base_filters = [
+        CongressionalFiling.publication_status == PUBLICATION_STATUS_PUBLISHED,
+        CongressionalFiling.domain_release_state == DOMAIN_RELEASE_PUBLISHED,
+        CongressionalTransaction.publication_status == PUBLICATION_STATUS_PUBLISHED,
+        CongressionalTransaction.transaction_date.is_not(None),
+        CongressionalTransaction.transaction_date >= date_from,
+        CongressionalTransaction.transaction_date <= today,
+        CongressionalTransaction.ticker.is_not(None),
+        CongressionalTransaction.asset_type == resolved_asset_type,
+        CongressionalTransaction.transaction_type == "purchase",
+    ]
+
+    if transaction_date_to:
+        base_filters.append(CongressionalTransaction.transaction_date <= transaction_date_to)
+
+    active_ticker_count = session.execute(
+        select(func.count(func.distinct(CongressionalTransaction.ticker)))
+        .join(CongressionalTransaction.filing)
+        .where(*base_filters)
+    ).scalar_one()
+
+    buy_disclosure_count = session.execute(
+        select(func.count(CongressionalTransaction.id))
+        .join(CongressionalTransaction.filing)
+        .where(*base_filters)
+    ).scalar_one()
+
+    distinct_filer_count = session.execute(
+        select(func.count(func.distinct(CongressionalFiling.reporting_person)))
+        .join(CongressionalTransaction, CongressionalTransaction.filing_id == CongressionalFiling.id)
+        .where(*base_filters)
+    ).scalar_one()
+
+    latest_filing_date = session.execute(
+        select(func.max(CongressionalFiling.filing_date))
+        .join(CongressionalTransaction, CongressionalTransaction.filing_id == CongressionalFiling.id)
+        .where(*base_filters)
+    ).scalar_one()
+
+    return {
+        "active_ticker_count": int(active_ticker_count or 0),
+        "buy_disclosure_count": int(buy_disclosure_count or 0),
+        "distinct_filer_count": int(distinct_filer_count or 0),
+        "latest_filing_date": latest_filing_date,
+    }

@@ -35,6 +35,13 @@ export type DashboardMetrics = {
   filerCount: number;
 };
 
+export type SignalMetrics = {
+  activeTickerCount: number;
+  buyDisclosureCount: number;
+  distinctFilerCount: number;
+  latestFilingDate: string | null;
+};
+
 export type ValidationMessage = {
   code: string;
   message: string;
@@ -223,6 +230,25 @@ const dashboardMetricsQuery = `
   }
 `;
 
+const signalMetricsQuery = `
+  query SignalMetrics(
+    $assetType: String
+    $transactionDateFrom: String
+    $transactionDateTo: String
+  ) {
+    signalMetrics(
+      assetType: $assetType
+      transactionDateFrom: $transactionDateFrom
+      transactionDateTo: $transactionDateTo
+    ) {
+      activeTickerCount
+      buyDisclosureCount
+      distinctFilerCount
+      latestFilingDate
+    }
+  }
+`;
+
 const adminValidationResultsQuery = `
   query AdminValidationResults($status: String, $limit: Int!) {
     adminValidationResults(status: $status, limit: $limit) {
@@ -355,6 +381,23 @@ export async function fetchDashboardMetrics(params: {
   });
 
   return data.dashboardMetrics;
+}
+
+export async function fetchSignalMetrics(params: {
+  assetType?: string;
+  transactionDateFrom?: string;
+  transactionDateTo?: string;
+}): Promise<SignalMetrics> {
+  const data = await postGraphQL<{ signalMetrics: SignalMetrics }>({
+    query: signalMetricsQuery,
+    variables: {
+      assetType: params.assetType || null,
+      transactionDateFrom: params.transactionDateFrom || null,
+      transactionDateTo: params.transactionDateTo || null,
+    },
+  });
+
+  return data.signalMetrics;
 }
 
 export async function fetchAdminValidationResults(params: {
